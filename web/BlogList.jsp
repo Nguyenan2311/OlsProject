@@ -118,43 +118,9 @@
                                 </div>
                                 <ul class="nav navbar-nav">	
                                     <li class="active"><a href="javascript:;">Home <i class="fa fa-chevron-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="index.html">Home 1</a></li>
-                                            <li><a href="index-2.html">Home 2</a></li>
-                                        </ul>
+
                                     </li>
-                                    <li><a href="javascript:;">Pages <i class="fa fa-chevron-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="javascript:;">About<i class="fa fa-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="about-1.html">About 1</a></li>
-                                                    <li><a href="about-2.html">About 2</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="javascript:;">Event<i class="fa fa-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="event.html">Event</a></li>
-                                                    <li><a href="events-details.html">Events Details</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="javascript:;">FAQ's<i class="fa fa-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="faq-1.html">FAQ's 1</a></li>
-                                                    <li><a href="faq-2.html">FAQ's 2</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="javascript:;">Contact Us<i class="fa fa-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="contact-1.html">Contact Us 1</a></li>
-                                                    <li><a href="contact-2.html">Contact Us 2</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="portfolio.html">Portfolio</a></li>
-                                            <li><a href="profile.html">Profile</a></li>
-                                            <li><a href="membership.html">Membership</a></li>
-                                            <li><a href="error-404.html">404 Page</a></li>
-                                        </ul>
-                                    </li>
+
                                     <li class="add-mega-menu"><a href="javascript:;">Our Courses <i class="fa fa-chevron-down"></i></a>
                                         <ul class="sub-menu add-menu">
                                             <li class="add-menu-left">
@@ -174,10 +140,8 @@
                                     </li>
                                     <li><a href="javascript:;">Blog <i class="fa fa-chevron-down"></i></a>
                                         <ul class="sub-menu">
-                                            <li><a href="blog-classic-grid.html">Blog Classic</a></li>
-                                            <li><a href="blog-classic-sidebar.html">Blog Classic Sidebar</a></li>
-                                            <li><a href="blog-list-sidebar.html">Blog List Sidebar</a></li>
-                                            <li><a href="blog-standard-sidebar.html">Blog Standard Sidebar</a></li>
+                                            <li><a href="bloglist">Blog List</a></li>
+
                                             <li><a href="blog-details.html">Blog Details</a></li>
                                         </ul>
                                     </li>
@@ -268,7 +232,7 @@
                                         <div class="widget">
                                             <h6 class="widget-title">Search</h6>
                                             <div class="search-bx style-1">
-                                                <form role="search" method="post">
+                                                <form role="search" method="get" action="search">
                                                     <div class="input-group">
                                                         <input name="text" class="form-control" placeholder="Enter your keywords..." type="text">
                                                         <span class="input-group-btn">
@@ -278,84 +242,56 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <h4 class="widget_title" style="color: #2d2d2d;">Category</h4>
-                                        <ul class="list cat-list" >
-                                            <c:forEach items="${listBC}" var="o">
-                                                <li>
-                                                    <a href="blogcategory?cid=${o.id}" class="d-flex">
-                                                        <p>${o.value}</p>
-                                                    </a>
-                                                </li>
-                                            </c:forEach>
-                                        </ul>
+                                        <div class="widget">
+                                            <h6 class="widget-title">Category</h6>
+                                            <div class="form-group">
+                                                <select class="form-control" onchange="location = this.value;">
+                                                    <option value="bloglist">Show all blog</option>
+                                                    <c:forEach items="${listBC}" var="o">
+                                                        <option value="blogcategory?cid=${o.id}" <c:if test="${param.cid == o.id}">selected</c:if>>
+                                                            ${o.value}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
 
                                         <div class="widget recent-posts-entry">
                                             <h6 class="widget-title">Latest Posts</h6>
                                             <c:forEach items="${listLastPost}" var="o">
-                                            <div class="widget-post-bx">
-                                                <div class="widget-post clearfix">
-                                                    <div class="ttr-post-info">
-                                                        <div class="ttr-post-header">
-                                                            <h6 class="post-title"><a href="blog-details.html">${o.title}</a></h6>
+                                                <div class="widget-post-bx">
+                                                    <div class="widget-post clearfix">
+                                                        <div class="ttr-post-info">
+                                                            <div class="ttr-post-header">
+                                                                <h6 class="post-title"><a href="blog-details.html">${o.title}</a></h6>
+                                                            </div>
+                                                            <ul class="media-post">
+                                                                <li><a href="#"><i class="fa fa-calendar"></i>${o.created_date}</a></li>
+                                                            </ul>
                                                         </div>
-                                                        <ul class="media-post">
-                                                            <li><a href="#"><i class="fa fa-calendar"></i>${o.created_date}</a></li>
-                                                        </ul>
                                                     </div>
                                                 </div>
-                                            </div>
                                             </c:forEach>
                                         </div>
-                                        <div class="widget widget-newslatter">
-                                            <h6 class="widget-title">Newsletter</h6>
-                                            <div class="news-box">
-                                                <p>Enter your e-mail and subscribe to our newsletter.</p>
-                                                <form class="subscription-form" action="http://educhamp.themetrades.com/demo/assets/script/mailchamp.php" method="post">
-                                                    <div class="ajax-message"></div>
-                                                    <div class="input-group">
-                                                        <input name="dzEmail" required="required" type="email" class="form-control" placeholder="Your Email Address"/>
-                                                        <button name="submit" value="Submit" type="submit" class="btn black radius-no">
-                                                            <i class="fa fa-paper-plane-o"></i>
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="widget widget_gallery gallery-grid-4">
-                                            <h6 class="widget-title">Our Gallery</h6>
-                                            <ul>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic2.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic1.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic5.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic7.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic8.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic9.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic3.jpg" alt=""></a></div></li>
-                                                <li><div><a href="#"><img src="assets/images/gallery/pic4.jpg" alt=""></a></div></li>
+                                        <div class="widget contact-info">
+                                            <h6 class="widget-title">Contact Us</h6>
+                                            <ul class="list-unstyled">
+                                                <li><i class="fa fa-map-marker"></i> 123 Main Street, City Name</li>
+                                                <li><i class="fa fa-phone"></i> +1 (123) 456-7890</li>
+                                                <li><i class="fa fa-envelope"></i> contact@example.com</li>
                                             </ul>
                                         </div>
-                                        <div class="widget widget_tag_cloud">
-                                            <h6 class="widget-title">Tags</h6>
-                                            <div class="tagcloud"> 
-                                                <a href="#">Design</a> 
-                                                <a href="#">User interface</a> 
-                                                <a href="#">SEO</a> 
-                                                <a href="#">WordPress</a> 
-                                                <a href="#">Development</a> 
-                                                <a href="#">Joomla</a> 
-                                                <a href="#">Design</a> 
-                                                <a href="#">User interface</a> 
-                                                <a href="#">SEO</a> 
-                                                <a href="#">WordPress</a> 
-                                                <a href="#">Development</a> 
-                                                <a href="#">Joomla</a> 
-                                                <a href="#">Design</a> 
-                                                <a href="#">User interface</a> 
-                                                <a href="#">SEO</a> 
-                                                <a href="#">WordPress</a> 
-                                                <a href="#">Development</a> 
-                                                <a href="#">Joomla</a> 
-                                            </div>
+
+                                        <div class="widget social-links">
+                                            <h6 class="widget-title">Follow Us</h6>
+                                            <ul class="list-inline">
+                                                <li class="list-inline-item"><a href="https://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                                <li class="list-inline-item"><a href="https://twitter.com" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                                <li class="list-inline-item"><a href="https://instagram.com" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                                                <li class="list-inline-item"><a href="https://linkedin.com" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                                            </ul>
                                         </div>
                                     </aside>
                                 </div>
