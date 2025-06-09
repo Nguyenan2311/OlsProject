@@ -174,6 +174,37 @@ public class DAO extends DBContext {
         }
         return list;
     }
+    public List<BlogDTO> getListPostByName(String name) {
+        List<BlogDTO> list = new ArrayList<>();
+        String query = "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n" +
+"                FROM [dbo].[Blog] b\n" +
+"                JOIN [dbo].[User] u ON b.author_id = u.id\n" +
+"				join Setting s on b.category_id = s.id\n" +
+"				where b.title like ?\n" +
+"                ORDER BY created_date DESC";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, "%"+name+"%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new BlogDTO(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getDate(7),
+                        rs.getDate(8),
+                        rs.getInt(9),
+                        rs.getString(10),
+                        rs.getString(11)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
 
     public List<BlogCategory> getListCategory() {
         List<BlogCategory> list = new ArrayList<>();
@@ -250,10 +281,10 @@ public class DAO extends DBContext {
         DAO dao = new DAO();
         User user = dao.login("admin@fpt.edu.vn", "admin123");
         List<Slider> listS = dao.getSlider();
-        List<BlogDTO> listP = dao.getListPost();
+        List<BlogDTO> listP = dao.getListPostByName("English");
         List<CourseDTO> listC = dao.getCourse();
         List<BlogCategory> listBC = dao.getListCategory();
-        for (BlogCategory o : listBC) {
+        for (BlogDTO o : listP) {
             System.out.println(o);
         }
 
