@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: #F3F4F6;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    background-color: #FFFFFF;
+    border-bottom: 2px solid #c2c2c2;
+    width: 100%;
+    position: relative; /* Đảm bảo header nằm trên cùng */
+    z-index: 1000;
+}
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3bb371;
+    font-family: "TTBluescreens", "Courier New", monospace;
+}
+nav {
+    display: flex;
+    gap: 24px;
+}
+nav a {
+    text-decoration: none;
+    color: #1F2937;
+    font-size: 16px;
+}
+nav a:hover {
+    color: #8B5CF6;
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.search-form {
+    display: flex;
+    align-items: center;
+}
+.search-input {
+    padding: 6px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 20px;
+    font-size: 14px;
+    width: 150px;
+}
+.search-button {
+    background-color: #E5E7EB;
+    border: none;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    margin-left: 8px;
+}
+.search-button svg {
+    width: 20px;
+    height: 20px;
+    color: #6B7280;
+}
+.signup-button {
+    background-color: #14B8A6;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: 16px;
+}
+.signup-button:hover {
+    background-color: #0D9488;
+}
+
+.form {
+    background-color: #E6F7FA;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px auto; /* Đảm bảo form cách header một khoảng */
+}
+.form h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #1F2937;
+}
+.form p {
+    color: #6B7280;
+    margin-bottom: 24px;
+}
+.input-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    color: #4B5563;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+.input-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.links {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+.link {
+    color: #3B82F6;
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
+.login-button {
+    background-color: #1F2937;
+    color: #FFFFFF;
+    padding: 12px;
+    border-radius: 6px;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+.login-button:hover {
+    background-color: #374151;
+}
