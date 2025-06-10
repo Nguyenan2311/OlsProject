@@ -324,9 +324,9 @@
 }
 .action-box img,
 .ttr-post-media img {
-  width: 350px !important; 
-    height: 200px !important;
-    object-fit: cover !important;
+  width: 100%;
+    height: auto;
+
 }
 /* Box Background */
 .ttr-box-bg{

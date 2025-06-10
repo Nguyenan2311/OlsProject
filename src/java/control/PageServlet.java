@@ -21,8 +21,8 @@ import model.BlogDTO;
  *
  * @author An_PC
  */
-@WebServlet(name = "SearchServlet", urlPatterns = {"/search"})
-public class SearchServlet extends HttpServlet {
+@WebServlet(name = "PageServlet", urlPatterns = {"/page"})
+public class PageServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,31 +36,21 @@ public class SearchServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String text = request.getParameter("text");
-
         DAO dao = new DAO();
         String indexPage = request.getParameter("index");
-
-        if (indexPage == null) {
-            indexPage = "1";
-        }
         int index = Integer.parseInt(indexPage);
-
-        int count = dao.countByTitle(text);
+        List<BlogDTO> listByPage = dao.pagingPost(index);
+        List<BlogCategory> listBC = dao.getListCategory();
+        List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
+        int count = dao.getTotalBlog();
         int endPage = count / 3;
-        if (count % 3 != 0) {
+        if (endPage % 3 != 0) {
             endPage++;
         }
-        List<BlogDTO> listPost = dao.getListPostByName(text, index);
-        List<BlogCategory> listBC = dao.getListCategory();
-        List<Blog> listLastPost = dao.getLastPost();
-        request.setAttribute("endPage", endPage);
+        request.setAttribute("listPost", listByPage);
+        request.setAttribute("endPage",endPage);
         request.setAttribute("listBC", listBC);
         request.setAttribute("listLastPost", listLastPost);
-        request.setAttribute("listPost", listPost);
-        request.setAttribute("tag", index);
-        request.setAttribute("type", "search");
-        request.setAttribute("value", text);
         request.getRequestDispatcher("BlogList.jsp").forward(request, response);
     }
 
