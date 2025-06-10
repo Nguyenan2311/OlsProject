@@ -143,18 +143,20 @@ public class DAO extends DBContext {
         return list;
     }
 
-    public List<BlogDTO> getListPostByCategory(String id) {
+    public List<BlogDTO> getListPostByCategory(String id, int index) {
         List<BlogDTO> list = new ArrayList<>();
         String query = "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n"
                 + "                FROM [dbo].[Blog] b\n"
                 + "                JOIN [dbo].[User] u ON b.author_id = u.id\n"
                 + "				join Setting s on b.category_id = s.id\n"
                 + "				where b.category_id = ?\n"
-                + "                ORDER BY created_date DESC";
+                + "                ORDER BY b.id\n"
+                + "				offset ? rows fetch next 3 rows only";
         try {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
             ps.setString(1, id);
+            ps.setInt(2, (index - 1) * 3);
             rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(new BlogDTO(
@@ -174,18 +176,85 @@ public class DAO extends DBContext {
         }
         return list;
     }
-    public List<BlogDTO> getListPostByName(String name) {
-        List<BlogDTO> list = new ArrayList<>();
-        String query = "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n" +
-"                FROM [dbo].[Blog] b\n" +
-"                JOIN [dbo].[User] u ON b.author_id = u.id\n" +
-"				join Setting s on b.category_id = s.id\n" +
-"				where b.title like ?\n" +
-"                ORDER BY created_date DESC";
+
+    public BlogDTO getBlogByid(String id) {
+
+        String query = "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n"
+                + "                FROM [dbo].[Blog] b\n"
+                + "                JOIN [dbo].[User] u ON b.author_id = u.id\n"
+                + "				join Setting s on b.category_id = s.id\n"
+                + "				where b.id = ?";
         try {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
-            ps.setString(1, "%"+name+"%");
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return new BlogDTO(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getDate(7),
+                        rs.getDate(8),
+                        rs.getInt(9),
+                        rs.getString(10),
+                        rs.getString(11));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public List<BlogDTO> pagingPost(int index) {
+        List<BlogDTO> list = new ArrayList<>();
+        String query = "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n"
+                + "                FROM [dbo].[Blog] b\n"
+                + "                JOIN [dbo].[User] u ON b.author_id = u.id\n"
+                + "				join Setting s on b.category_id = s.id\n"
+                + "                ORDER BY created_date DESC\n"
+                + "				offset ? rows fetch next 3 rows only";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, (index - 1) * 3);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new BlogDTO(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getDate(7),
+                        rs.getDate(8),
+                        rs.getInt(9),
+                        rs.getString(10),
+                        rs.getString(11)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<BlogDTO> getListPostByName(String name, int index) {
+        List<BlogDTO> list = new ArrayList<>();
+        String query = "				\n"
+                + "SELECT b.id, b.thumbnail_url, b.title, b.content, b.brief_info, b.author_id, b.created_date,b.updated_date,b.category_id, u.first_name + ' ' + u.last_name AS author_name, s.value\n"
+                + "                FROM [dbo].[Blog] b\n"
+                + "                JOIN [dbo].[User] u ON b.author_id = u.id\n"
+                + "				join Setting s on b.category_id = s.id\n"
+                + "				where b.title like ?\n"
+                + "                ORDER BY b.id\n"
+                + "				offset ? rows fetch next 3 rows only";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, "%" + name + "%");
+            ps.setInt(2, (index - 1) * 3);
             rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(new BlogDTO(
@@ -277,16 +346,68 @@ public class DAO extends DBContext {
         return list;
     }
 
+    public int getTotalBlog() {
+
+        String query = "select COUNT(*) from Blog";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
+    public int countByCategory(String number) {
+
+        String query = "select COUNT(*) from Blog\n"
+                + "where category_id = ?";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, number);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
+    public int countByTitle(String name) {
+
+        String query = "select COUNT(*) from Blog\n"
+                + "where title like ?";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, "%" + name + "%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         DAO dao = new DAO();
         User user = dao.login("admin@fpt.edu.vn", "admin123");
         List<Slider> listS = dao.getSlider();
-        List<BlogDTO> listP = dao.getListPostByName("English");
+        List<BlogDTO> listP = dao.getListPostByCategory("9", 1);
         List<CourseDTO> listC = dao.getCourse();
         List<BlogCategory> listBC = dao.getListCategory();
+        int num = dao.countByCategory("9");
         for (BlogDTO o : listP) {
             System.out.println(o);
         }
+        System.out.println("---");
+        System.out.println(num);
 
     }
 }
