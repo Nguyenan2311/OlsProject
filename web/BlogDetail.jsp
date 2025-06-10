@@ -1,12 +1,11 @@
 <%-- 
-    Document   : BlogList
-    Created on : Jun 5, 2025, 2:56:36 PM
+    Document   : BlogDetail
+    Created on : Jun 10, 2025, 12:29:27 AM
     Author     : An_PC
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,22 +50,11 @@
 
         <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/shortcodes/icon-box.css">
 
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="assets/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
         <style>
-            .ttr-post-media img {
-                width: 350px;
-                height: 200px;
-                object-fit: cover;
-            }
-            .list.cat-list {
-                list-style-type: none; /* Loại bỏ dấu chấm */
-                padding: 0; /* Xóa khoảng cách bên trong */
-                margin: 0; /* Xóa khoảng cách bên ngoài */
-            }
 
         </style>
 
@@ -83,7 +71,7 @@
                         <div class="container clearfix">
                             <!-- Header Logo ==== -->
                             <div class="menu-logo">
-                                <a href="index.html"><img src="img/logo.png" alt=""></a>
+                                <a href="home"><img src="img/logo.png" alt=""></a>
                             </div>
                             <!-- Mobile Nav Button ==== -->
                             <button class="navbar-toggler collapsed menuicon justify-content-end" type="button" data-toggle="collapse" data-target="#menuDropdown" aria-controls="menuDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -141,8 +129,7 @@
                                     <li><a href="javascript:;">Blog <i class="fa fa-chevron-down"></i></a>
                                         <ul class="sub-menu">
                                             <li><a href="bloglist">Blog List</a></li>
-
-                                            <li><a href="blog-details.html">Blog Details</a></li>
+                                           
                                         </ul>
                                     </li>
                                     <li class="nav-dashboard"><a href="javascript:;">Dashboard <i class="fa fa-chevron-down"></i></a>
@@ -187,67 +174,39 @@
                 <!-- inner page banner -->
 
 
-                <!-- contact area -->
                 <div class="content-block">
                     <div class="section-area section-sp1">
                         <div class="container">
                             <div class="row">
                                 <!-- Left part start -->
-                                <div class="col-lg-8">
-                                    <c:forEach items="${listPost}" var="o">
-                                        <div class="blog-post blog-md clearfix">
-                                            <div class="ttr-post-media"> 
-                                                <a href="#"><img src="${o.thumbnail_url}" alt=""></a> 
-                                            </div>
-                                            <div class="ttr-post-info">
-                                                <ul class="media-post">
-                                                    <li><a href="#"><i class="fa fa-calendar"></i>${o.created_date}</a></li>
-                                                    <li><a href="#"><i class="fa fa-user"></i>${o.authorName}</a></li>
-                                                    <li><a href="#"><i class="fa fa-tag"></i>${o.categoryName}</a></li>
-                                                </ul>
-                                                <h5 class="post-title"><a href="blogDetail?bid=${o.id}">${o.title}</a></h5>
-                                                <p>${o.brief_info}</p>
-                                                <div class="post-extra">
-                                                    <a href="blogDetail?bid=${o.id}" class="btn-link">READ MORE</a>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-8 col-xl-8">
+                                    <!-- blog start -->
+                                    <div class="recent-news blog-lg">
+                                        <div class="action-box blog-lg">
+                                            <img src="${blog.thumbnail_url}" alt="" class="blog-fixed-img">
                                         </div>
-                                    </c:forEach>
-                                    <!-- Pagination start -->
-                                    <c:set var="url">
-                                        <c:choose>
-                                            <c:when test="${type eq 'search'}">
-                                                search?text=${value}
-                                            </c:when>
-                                            <c:when test="${type eq 'category'}">
-                                                blogcategory?cid=${value}
-                                            </c:when>
-                                            <c:otherwise>
-                                                bloglist
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:set>
-
-                                    <div class="pagination-bx rounded-sm gray clearfix">
-                                        <ul class="pagination">
-                                            <c:forEach begin="1" end="${endPage}" var="i">
-                                                <li class="${tag == i ? 'active' : ''}">
-                                                    <a href="${url}${url.contains('?') ? '&' : '?'}index=${i}">${i}</a>
-                                                </li>
-                                            </c:forEach>
-                                        </ul>
+                                        <div class="info-bx">
+                                            <ul class="media-post">
+                                                <li><a href="#"><i class="fa fa-calendar"></i>${blog.created_date}</a></li>
+                                                <li><a href="#"><i class="fa fa-user"></i>${blog.authorName}</a></li>
+                                                <li><a href="#"><i class="fa fa-tag"></i>${blog.categoryName}</a></li>
+                                            </ul>
+                                            <h5 class="post-title"><a href="#">${blog.title}</a></h5>
+                                            <p>${blog.content}</p>
+                                        </div>
                                     </div>
 
-                                    <!-- Pagination END -->
+
+                                    <!-- blog END -->
                                 </div>
                                 <!-- Left part END -->
                                 <!-- Side bar start -->
-                                <div class="col-lg-4 sticky-top">
-                                    <aside class="side-bar sticky-top">
+                                <div class="col-lg-4 col-xl-4">
+                                    <aside  class="side-bar sticky-top">
                                         <div class="widget">
                                             <h6 class="widget-title">Search</h6>
                                             <div class="search-bx style-1">
-                                                <form role="search" method="get" action="search">
+                                                <form role="search" method="post" action="search">
                                                     <div class="input-group">
                                                         <input name="text" class="form-control" placeholder="Enter your keywords..." type="text">
                                                         <span class="input-group-btn">
@@ -270,9 +229,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
-
-
                                         <div class="widget recent-posts-entry">
                                             <h6 class="widget-title">Latest Posts</h6>
                                             <c:forEach items="${listLastPost}" var="o">
@@ -290,6 +246,8 @@
                                                 </div>
                                             </c:forEach>
                                         </div>
+
+
                                         <div class="widget contact-info">
                                             <h6 class="widget-title">Contact Us</h6>
                                             <ul class="list-unstyled">
@@ -420,6 +378,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 text-center"> <a target="_blank" href="https://www.templateshub.net">Templates Hub</a></div>
                         </div>
                     </div>
+                </div>
             </footer>
             <!-- Footer END ==== -->
             <!-- scroll top button -->

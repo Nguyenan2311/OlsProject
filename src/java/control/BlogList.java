@@ -36,15 +36,28 @@ public class BlogList extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String indexPage = request.getParameter("index");
+        if (indexPage == null) {
+            indexPage = "1";
+        }
+        int index = Integer.parseInt(indexPage);
         DAO dao = new DAO();
-        List<BlogDTO> listPost = dao.getListPost();// lay danh sach post tu dao
+        int count = dao.getTotalBlog();
+        int endPage = count / 3;
+        if (count % 3 != 0) {
+            endPage++;
+        }
+        List<BlogDTO> listByPage = dao.pagingPost(index);
         List<BlogCategory> listBC = dao.getListCategory();
         List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
-        request.setAttribute("listPost", listPost);
+
+        request.setAttribute("endPage", endPage);
+        request.setAttribute("listPost", listByPage);
         request.setAttribute("listBC", listBC);
+        request.setAttribute("tag", index);
         request.setAttribute("listLastPost", listLastPost);
-        
-         request.getRequestDispatcher("BlogList.jsp").forward(request, response);
+
+        request.getRequestDispatcher("BlogList.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

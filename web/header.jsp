@@ -9,7 +9,7 @@
         <nav>
             <a href="home">Home</a>
             <a href="#">Course</a>
-            <a href="#">Blog</a>
+            <a href="bloglist">Blog</a>
             <a href="profile.jsp">About</a>
         </nav>
         <div class="header-right">
