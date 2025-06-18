@@ -250,14 +250,11 @@
                                                 </div>
                                                 <form class="edit-profile" action="changepassword" method="post">
                                                     <div class="">
-                                                        <c:if test="${not empty eror}">
-                                                            <p style="color:red;" class="text-center">${eror}</p>
+                                                        <c:if test="${not empty error}">
+                                                            <p style="color:red;" class="text-center">${error}</p>
                                                         </c:if>
-                                                        <c:if test="${not empty eror2}">
-                                                            <p style="color:red;" class="text-center">${eror2}</p>
-                                                        </c:if>
-                                                        <c:if test="${not empty mess}">
-                                                            <p style="color:green;" class="text-center">${mess}</p>
+                                                        <c:if test="${not empty message}">
+                                                            <p style="color:green;" class="text-center">${message}</p>
                                                         </c:if>
                                                         <div class="form-group row">
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-9 ml-auto">

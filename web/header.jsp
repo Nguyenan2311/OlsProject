@@ -10,7 +10,7 @@
             <a href="home">Home</a>
             <a href="#">Course</a>
             <a href="bloglist">Blog</a>
-            <a href="profile.jsp">About</a>
+            <a href="userprofile">About</a>
         </nav>
         <div class="header-right">
             <!-- Form tìm kiếm -->
@@ -24,7 +24,7 @@
                 </svg>
             </button>
             <c:if test="${not empty sessionScope.user}">
-                <a href="logout" class="signup-button">Log out</a>
+                <a href="logout" class="signup-button" style="color: white ; background-color: red">Log out</a>
             </c:if>
                  <c:if test="${empty sessionScope.user}">
                 <a href="login" class="signup-button">Log in</a>
