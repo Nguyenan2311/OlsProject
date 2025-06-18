@@ -226,7 +226,7 @@
                         <div class="scroll-content">
                             <c:forEach items="${listPost}" var="o">
                                 <div class="card">
-                                    <a href="https://example.com/post1">
+                                    <a href="blogDetail?bid=${o.id}">
                                         <img src="${o.thumbnail_url}" alt="" width="200px" height="200px">
                                         <p>${o.title}</p>
                                     </a>
@@ -262,7 +262,7 @@
                     <c:forEach items="${listLastPost}" var="o">                             
                         <div class="post-item"> <!-- B?c m?i post trong m?t div riêng -->
                             <p class="post-title">
-                                <a href="#">${o.title}</a>
+                                <a href="blogDetail?bid=${o.id}">${o.title}</a>
                             </p>
                             <p class="post-date">
                                 ${o.created_date}

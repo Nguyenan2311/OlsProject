@@ -37,14 +37,32 @@ public class BlogCategoryServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String blogCategoryId = request.getParameter("cid");
+        String indexPage = request.getParameter("index");
+
         DAO dao = new DAO();
-        List<BlogDTO> listPost = dao.getListPostByCategory(blogCategoryId);
+       
+
+        if (indexPage == null) {
+            indexPage = "1";
+        }
+        int index = Integer.parseInt(indexPage);
+
+        int count = dao.countByCategory(blogCategoryId);
+        int endPage = count / 3;
+        if (count % 3 != 0) {
+            endPage++;
+        }
+        List<BlogDTO> listPost = dao.getListPostByCategory(blogCategoryId,index);
         List<BlogCategory> listBC = dao.getListCategory();
         List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
         
         request.setAttribute("listPost", listPost);
+        request.setAttribute("endPage", endPage);
         request.setAttribute("listBC", listBC);
         request.setAttribute("listLastPost", listLastPost);
+        request.setAttribute("type", "category");
+        request.setAttribute("value", blogCategoryId);
+        request.setAttribute("tag", index);
         request.getRequestDispatcher("BlogList.jsp").forward(request, response);
     }
 

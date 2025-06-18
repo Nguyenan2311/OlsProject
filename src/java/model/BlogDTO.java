@@ -128,6 +128,11 @@ public class BlogDTO {
         this.categoryName = categoryName;
     }
 
+    @Override
+    public String toString() {
+        return "BlogDTO{" + "id=" + id + ", thumbnail_url=" + thumbnail_url + ", title=" + title + ", content=" + content + ", brief_info=" + brief_info + ", author_id=" + author_id + ", created_date=" + created_date + ", updated_date=" + updated_date + ", category_id=" + category_id + ", authorName=" + authorName + ", categoryName=" + categoryName + '}';
+    }
+
       
     
     

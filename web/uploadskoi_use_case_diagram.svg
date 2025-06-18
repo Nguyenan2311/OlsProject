@@ -1,0 +1,146 @@
+<svg width="1000" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- System boundary -->
+  <rect x="200" y="50" width="600" height="700" fill="none" stroke="black" stroke-width="2"/>
+  <text x="480" y="40" text-anchor="middle" font-size="16" font-weight="bold">Koi Purchase Management System</text>
+  
+  <!-- Actors -->
+  <!-- Customer -->
+  <g id="customer">
+    <circle cx="100" cy="120" r="10" fill="white" stroke="black"/>
+    <line x1="100" y1="130" x2="100" y2="160" stroke="black"/>
+    <line x1="80" y1="140" x2="120" y2="140" stroke="black"/>
+    <line x1="100" y1="160" x2="80" y2="190" stroke="black"/>
+    <line x1="100" y1="160" x2="120" y2="190" stroke="black"/>
+    <text x="100" y="210" text-anchor="middle" font-size="12">Customer</text>
+  </g>
+  
+  <!-- Consulting Staff -->
+  <g id="consulting-staff">
+    <circle cx="100" cy="350" r="10" fill="white" stroke="black"/>
+    <line x1="100" y1="360" x2="100" y2="390" stroke="black"/>
+    <line x1="80" y1="370" x2="120" y2="370" stroke="black"/>
+    <line x1="100" y1="390" x2="80" y2="420" stroke="black"/>
+    <line x1="100" y1="390" x2="120" y2="420" stroke="black"/>
+    <text x="100" y="440" text-anchor="middle" font-size="12">Consulting Staff</text>
+  </g>
+  
+  <!-- Manager -->
+  <g id="manager">
+    <circle cx="100" cy="580" r="10" fill="white" stroke="black"/>
+    <line x1="100" y1="590" x2="100" y2="620" stroke="black"/>
+    <line x1="80" y1="600" x2="120" y2="600" stroke="black"/>
+    <line x1="100" y1="620" x2="80" y2="650" stroke="black"/>
+    <line x1="100" y1="620" x2="120" y2="650" stroke="black"/>
+    <text x="100" y="670" text-anchor="middle" font-size="12">Manager</text>
+  </g>
+  
+  <!-- CHPay System -->
+  <g id="chpay-system">
+    <circle cx="900" cy="280" r="10" fill="white" stroke="black"/>
+    <line x1="900" y1="290" x2="900" y2="320" stroke="black"/>
+    <line x1="880" y1="300" x2="920" y2="300" stroke="black"/>
+    <line x1="900" y1="320" x2="880" y2="350" stroke="black"/>
+    <line x1="900" y1="320" x2="920" y2="350" stroke="black"/>
+    <text x="900" y="370" text-anchor="middle" font-size="12">CHPay System</text>
+  </g>
+  
+  <!-- Use Cases -->
+  <!-- Customer Use Cases -->
+  <ellipse cx="350" cy="100" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="350" y="105" text-anchor="middle" font-size="10">Search Koi Breeds</text>
+  
+  <ellipse cx="500" cy="120" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="500" y="125" text-anchor="middle" font-size="10">View Reference Price</text>
+  
+  <ellipse cx="350" cy="160" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="350" y="165" text-anchor="middle" font-size="10">Create Purchase Proposal</text>
+  
+  <ellipse cx="500" cy="180" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="500" y="185" text-anchor="middle" font-size="10">View Quote</text>
+  
+  <ellipse cx="350" cy="220" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="350" y="225" text-anchor="middle" font-size="10">Confirm Quote</text>
+  
+  <ellipse cx="500" cy="240" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="500" y="245" text-anchor="middle" font-size="10">Make Payment</text>
+  
+  <ellipse cx="350" cy="280" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="350" y="285" text-anchor="middle" font-size="10">Cancel Reservation</text>
+  
+  <ellipse cx="500" cy="300" rx="60" ry="20" fill="lightblue" stroke="black"/>
+  <text x="500" y="305" text-anchor="middle" font-size="10">Top Up Wallet</text>
+  
+  <!-- Staff Use Cases -->
+  <ellipse cx="350" cy="380" rx="60" ry="20" fill="lightgreen" stroke="black"/>
+  <text x="350" y="385" text-anchor="middle" font-size="10">Login System</text>
+  
+  <ellipse cx="500" cy="400" rx="60" ry="20" fill="lightgreen" stroke="black"/>
+  <text x="500" y="405" text-anchor="middle" font-size="10">View Assigned Orders</text>
+  
+  <ellipse cx="350" cy="440" rx="60" ry="20" fill="lightgreen" stroke="black"/>
+  <text x="350" y="445" text-anchor="middle" font-size="10">Create Quote</text>
+  
+  <ellipse cx="500" cy="460" rx="60" ry="20" fill="lightgreen" stroke="black"/>
+  <text x="500" y="465" text-anchor="middle" font-size="10">Attend Trip</text>
+  
+  <ellipse cx="350" cy="500" rx="60" ry="20" fill="lightgreen" stroke="black"/>
+  <text x="350" y="505" text-anchor="middle" font-size="10">Update Fish Orders</text>
+  
+  <!-- Manager Use Cases -->
+  <ellipse cx="350" cy="580" rx="60" ry="20" fill="lightyellow" stroke="black"/>
+  <text x="350" y="585" text-anchor="middle" font-size="10">Approve Quote</text>
+  
+  <ellipse cx="500" cy="600" rx="60" ry="20" fill="lightyellow" stroke="black"/>
+  <text x="500" y="605" text-anchor="middle" font-size="10">Assign Staff</text>
+  
+  <ellipse cx="350" cy="640" rx="60" ry="20" fill="lightyellow" stroke="black"/>
+  <text x="350" y="645" text-anchor="middle" font-size="10">Manage Staff</text>
+  
+  <ellipse cx="500" cy="660" rx="60" ry="20" fill="lightyellow" stroke="black"/>
+  <text x="500" y="665" text-anchor="middle" font-size="10">View Reports</text>
+  
+  <!-- System Use Cases -->
+  <ellipse cx="650" cy="200" rx="60" ry="20" fill="lightcoral" stroke="black"/>
+  <text x="650" y="205" text-anchor="middle" font-size="10">Process Payment</text>
+  
+  <ellipse cx="650" cy="250" rx="60" ry="20" fill="lightcoral" stroke="black"/>
+  <text x="650" y="255" text-anchor="middle" font-size="10">Send Notifications</text>
+  
+  <ellipse cx="650" cy="300" rx="60" ry="20" fill="lightcoral" stroke="black"/>
+  <text x="650" y="305" text-anchor="middle" font-size="10">Manage Order Status</text>
+  
+  <!-- Associations -->
+  <!-- Customer associations -->
+  <line x1="120" y1="120" x2="290" y2="100" stroke="black"/>
+  <line x1="120" y1="120" x2="440" y2="120" stroke="black"/>
+  <line x1="120" y1="150" x2="290" y2="160" stroke="black"/>
+  <line x1="120" y1="150" x2="440" y2="180" stroke="black"/>
+  <line x1="120" y1="180" x2="290" y2="220" stroke="black"/>
+  <line x1="120" y1="200" x2="440" y2="240" stroke="black"/>
+  <line x1="120" y1="220" x2="290" y2="280" stroke="black"/>
+  <line x1="120" y1="240" x2="440" y2="300" stroke="black"/>
+  
+  <!-- Staff associations -->
+  <line x1="120" y1="350" x2="290" y2="380" stroke="black"/>
+  <line x1="120" y1="370" x2="440" y2="400" stroke="black"/>
+  <line x1="120" y1="390" x2="290" y2="440" stroke="black"/>
+  <line x1="120" y1="410" x2="440" y2="460" stroke="black"/>
+  <line x1="120" y1="430" x2="290" y2="500" stroke="black"/>
+  
+  <!-- Manager associations -->
+  <line x1="120" y1="580" x2="290" y2="580" stroke="black"/>
+  <line x1="120" y1="600" x2="440" y2="600" stroke="black"/>
+  <line x1="120" y1="620" x2="290" y2="640" stroke="black"/>
+  <line x1="120" y1="640" x2="440" y2="660" stroke="black"/>
+  
+  <!-- System associations -->
+  <line x1="560" y1="240" x2="590" y2="200" stroke="black"/>
+  <line x1="880" y1="280" x2="710" y2="200" stroke="black"/>
+  
+  <!-- Include/Extend relationships -->
+  <line x1="440" y1="445" x2="590" y2="250" stroke="black" stroke-dasharray="5,5"/>
+  <text x="515" y="340" font-size="8">«include»</text>
+  
+  <line x1="410" y1="580" x2="590" y2="250" stroke="black" stroke-dasharray="5,5"/>
+  <text x="500" y="400" font-size="8">«include»</text>
+</svg>

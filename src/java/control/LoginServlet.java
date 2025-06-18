@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.User;
 
 /**
@@ -39,10 +40,12 @@ public class LoginServlet extends HttpServlet {
            User user = dao.login(email, password);
            if(user == null){
                request.setAttribute("errorMessage", "Invalid user name or password! Please try again");
-               request.getRequestDispatcher("view/Login.jsp").forward(request, response);
+               request.getRequestDispatcher("Login.jsp").forward(request, response);
            }
            else{
-                response.sendRedirect("home");
+               HttpSession session = request.getSession();
+               session.setAttribute("user", user);
+               response.sendRedirect("home");
            }
            
            
