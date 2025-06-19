@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package model;
+package control;
 
+import DAO.DAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author An_PC
  */
-@WebServlet(name="AddMedia", urlPatterns={"/addmedia"})
-public class AddMedia extends HttpServlet {
+@WebServlet(name="DeleteMedia", urlPatterns={"/deletemedia"})
+public class DeleteMedia extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -30,7 +31,10 @@ public class AddMedia extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+        String mediaId = request.getParameter("mid");
+        DAO dao = new DAO();
+        dao.deleteMediaById(mediaId);
+        response.sendRedirect("userprofile");
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

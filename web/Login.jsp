@@ -24,7 +24,7 @@
             <!-- Email Input -->
             <div class="input-group">
                 <label>EMAIL</label>
-                <input type="email" name="email" class="input-field" placeholder="Email" required oninvalid="this.setCustomValidity('Vui lòng nhập đúng định dạng email')">
+                <input type="input" name="email" class="input-field" placeholder="Email" required oninvalid="this.setCustomValidity('Vui lòng nhập đúng định dạng email')">
             </div>
             
             <!-- Password Input -->

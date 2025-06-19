@@ -8,19 +8,21 @@ import DAO.DAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.User;
+import jakarta.servlet.http.Part;
+import java.io.File;
 
 /**
  *
  * @author An_PC
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
-public class LoginServlet extends HttpServlet {
+@MultipartConfig
+@WebServlet(name = "AddMedia", urlPatterns = {"/addmedia"})
+public class AddMedia extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,6 +33,11 @@ public class LoginServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -43,7 +50,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("Login.jsp").forward(request, response);
+        request.getRequestDispatcher("AddMedia.jsp").forward(request, response);
     }
 
     /**
@@ -57,29 +64,36 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        if (!isValidEmail(email)) {
-        request.setAttribute("errorMessage", "Vui long nhap dung dinh dang email!");
-        request.getRequestDispatcher("Login.jsp").forward(request, response);
-        return;
-    }
-
-        String password = request.getParameter("password");
-        DAO dao = new DAO();
-        User user = dao.login(email, password);
-        if (user == null) {
-            request.setAttribute("errorMessage", "Invalid user name or password! Please try again");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
-        } else {
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            response.sendRedirect("home");
+        String userId = request.getParameter("userId");
+        String description = request.getParameter("description");
+        Part part = request.getPart("mediaFile");
+        if (part == null || part.getSize() == 0) {
+            request.setAttribute("error", "Vui lòng chọn ảnh hoặc video để cập nhật.");
+            request.setAttribute("userId", userId); // nếu bạn dùng lại trong JSP
+            request.getRequestDispatcher("AddMedia.jsp").forward(request, response);
+            return;
         }
-    }
 
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        return email != null && email.matches(emailRegex);
+        // Lấy tên file gốc
+        String fileName = new File(part.getSubmittedFileName()).getName();
+
+        String uploadPath = "D:\\Fu-Learning\\Summer25\\SWP391\\OlsProject\\web\\uploads";
+
+        File uploadFolder = new File(uploadPath);
+        if (!uploadFolder.exists()) {
+            uploadFolder.mkdirs();
+        }
+
+        // Ghi file vào web/uploads
+        String filePath = uploadPath + File.separator + fileName;
+        part.write(filePath);
+
+        // Đường dẫn tương đối để hiển thị (VD: <img src="uploads/abc.jpg">)
+        String mediaPath = "uploads/" + fileName;
+        String mediaType = fileName.endsWith(".mp4") ? "video" : "image";
+        DAO dao = new DAO();
+        dao.addMedia(userId, mediaPath, mediaType, description);
+        response.sendRedirect("userprofile");
     }
 
     /**

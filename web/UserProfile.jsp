@@ -257,18 +257,16 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
                                     <div class="profile-bx text-center">
-                                        <div class="user-profile-thumb">
-                                            <img src="${sessionScope.user.image}" alt=""/>
-                                        </div>
+
                                         <div class="profile-info">
-                                            <h4>${sessionScope.user.last_name}</h4>
+                                            <h4>${sessionScope.user.last_name} ${sessionScope.user.first_name}</h4>
                                             <span>${sessionScope.user.email}</span>
                                         </div>
 
                                         <div class="profile-tabnav">
                                             <ul class="nav nav-tabs">
                                                 <li class="nav-item">
-                                                    <a class="nav-link active" href="EditProfile.jsp"><i class="ti-pencil-alt"></i>Edit Profile</a>
+                                                    <a class="nav-link active" href="userprofile"><i class="ti-pencil-alt"></i>Edit Profile</a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="changepassword"><i class="ti-lock"></i>Change Password</a>
@@ -287,13 +285,13 @@
                                             <div class="">
                                                 <div class="form-group row">
                                                     <div class="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                        <h3>1. Personal Details</h3>
-                                                        <c:if test="${not empty message}">
-                                                            <p style="color:green;" class="text-center">${message}</p>
-                                                        </c:if>
+
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
+                                                    <c:if test="${not empty message}">
+                                                        <p style="color:green;" class="text-center">${message}</p>
+                                                    </c:if>
                                                     <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Fist Name</label>
                                                     <div class="col-12 col-sm-9 col-md-9 col-lg-7">
                                                         <input class="form-control" type="text" value="${sessionScope.user.first_name}" name="fname">
@@ -338,8 +336,13 @@
                                                     <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Phone</label>
                                                     <div class="col-12 col-sm-9 col-md-9 col-lg-7">
                                                         <input class="form-control" type="text" value="${sessionScope.user.phone}" name="phone">
+                                                        <c:if test="${not empty error}">
+                                                            <div class="alert alert-danger">${error}</div>
+                                                        </c:if>
                                                     </div>
                                                 </div>
+
+
                                                 <div class="form-group row">
                                                     <label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Date of birth</label>
                                                     <div class="col-12 col-sm-9 col-md-9 col-lg-7">
@@ -366,7 +369,7 @@
                                                         </div>
                                                         <div class="col-12 col-sm-9 col-md-9 col-lg-7">
                                                             <button type="submit" class="btn">Save changes</button>
-                                                            <button type="reset" class="btn-secondry">Cancel</button>
+                                                            <button type="reset"  class="btn-secondry">Reset</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -376,41 +379,44 @@
                                         <h3 class="mt-4 mb-3">Ảnh/Video của bạn</h3>
 
                                         <div class="row">
-                                            <c:choose>
-                                                <c:when test="${empty listM}">
-                                                    <div class="col-12 text-center my-4">
-                                                        <a href="addmedia.jsp" class="btn btn-primary">
-                                                            <i class="fas fa-plus"></i> Thêm ảnh hoặc video
-                                                        </a>
-                                                    </div>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:forEach items="${listM}" var="o">
-                                                        <div class="col-12 col-md-6 mb-4">
-                                                            <div class="card h-100">
-                                                                <div class="square-media">
-                                                                    <c:choose>
-                                                                        <c:when test="${o.media_type eq 'image'}">
-                                                                            <img src="${o.media_path}" alt="Ảnh">
-                                                                        </c:when>
-                                                                        <c:when test="${o.media_type eq 'video'}">
-                                                                            <video controls>
-                                                                                <source src="${o.media_path}" type="video/mp4">
-                                                                            </video>
-                                                                        </c:when>
-                                                                    </c:choose>
-                                                                </div>
-                                                                <div class="card-body p-2">
-                                                                    <p class="card-text text-truncate">${o.description}</p>
-                                                                    <a href="mediadetail?mid=${o.id}" class="btn btn-sm btn-outline-primary">
-                                                                        <i class="fas fa-edit"></i> Chỉnh sửa
-                                                                    </a>
-                                                                </div>
-                                                            </div>
+
+
+                                            <div class="col-12 text-center my-4">
+                                                <a href="addmedia" class="btn btn-primary">
+                                                    <i class="fas fa-plus"></i> Thêm ảnh hoặc video
+                                                </a>
+                                            </div>
+
+
+                                            <c:forEach items="${listM}" var="o">
+                                                <div class="col-12 col-md-6 mb-4">
+                                                    <div class="card h-100">
+                                                        <div class="square-media">
+                                                            <c:choose>
+                                                                <c:when test="${o.media_type eq 'image'}">
+                                                                    <img src="${o.media_path}" alt="Ảnh">
+                                                                </c:when>
+                                                                <c:when test="${o.media_type eq 'video'}">
+                                                                    <video controls>
+                                                                        <source src="${o.media_path}" type="video/mp4">
+                                                                    </video>
+                                                                </c:when>
+                                                            </c:choose>
                                                         </div>
-                                                    </c:forEach>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                        <div class="card-body p-2">
+                                                            <p class="card-text text-truncate">${o.description}</p>
+                                                            <a href="mediadetail?mid=${o.id}" class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-edit"></i> Edit
+                                                            </a>
+                                                            <a href="deletemedia?mid=${o.id}" class="btn btn-sm btn-outline-primary" style="color: red">
+                                                                <i class="fas fa-cut"></i> Delete
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+
+
                                         </div>
 
 

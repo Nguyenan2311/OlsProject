@@ -4,7 +4,6 @@
  */
 package DAO;
 
-import static com.oracle.wls.shaded.org.apache.xalan.lib.ExsltDatetime.date;
 import context.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -58,6 +57,7 @@ public class DAO extends DBContext {
         }
         return null;
     }
+
     public User getUserById(String id) {
         String query = "select* from [User]\n"
                 + "where id =?";
@@ -65,7 +65,7 @@ public class DAO extends DBContext {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
             ps.setString(1, id);
-            
+
             rs = ps.executeQuery();
             while (rs.next()) {
                 return new User(rs.getByte(1),
@@ -230,6 +230,38 @@ public class DAO extends DBContext {
             ps.executeUpdate();
         } catch (Exception e) {
 
+        }
+    }
+
+    public void addMedia(String userId, String media_path, String media_type, String description) {
+        String query = "INSERT INTO [dbo].[UserMedia]\n"
+                + "           ([user_id]\n"
+                + "           ,[media_path]\n"
+                + "           ,[media_type]\n"
+                + "           ,[description])\n"
+                + "     VALUES\n"
+                + "           (?, ?, ?, ?)";
+        try {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, userId);
+            ps.setString(2, media_path);
+            ps.setString(3, media_type);
+            ps.setString(4, description);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public void deleteMediaById(String id) {
+        String query = "DELETE FROM UserMedia WHERE id = ?";
+        try  {
+            conn = new DBContext().getConnection();//mo ket noi voi sql
+            ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

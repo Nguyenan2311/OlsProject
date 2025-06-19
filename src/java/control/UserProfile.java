@@ -37,6 +37,10 @@ public class UserProfile extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        if(user==null){
+            response.sendRedirect("login");
+            return;
+        }
         int userId = user.getId();
         
         DAO dao = new DAO();

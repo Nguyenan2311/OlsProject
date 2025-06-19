@@ -19,9 +19,11 @@
     <body>
         <div class="container mt-5">
             <h3 class="mb-4">Chỉnh sửa Ảnh/Video</h3>
-
+            <c:if test="${not empty error}" >
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
             <form action="editmedia" method="post" enctype="multipart/form-data">
-                <!-- ID giả định -->
+                
                 <input type="hidden" name="mediaId" value="${media.id}" />
                 <!-- Media hiện tại -->
                 <div class="mb-4">
@@ -38,7 +40,7 @@
                         </c:when>
                     </c:choose>
 
-                    
+
                 </div>
 
                 <!-- Tải media mới -->

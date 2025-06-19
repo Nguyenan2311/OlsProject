@@ -35,28 +35,34 @@ public class UpdateProfile extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String phoneValid = "0\\d{9}"; // bắt đầu bằng 0 và có 10 số
+
         String fname = request.getParameter("fname");
         String lname = request.getParameter("lname");
         String gender = request.getParameter("gender");
         String phone = request.getParameter("phone");
+        if (!phone.matches(phoneValid)) {
+            request.setAttribute("error", "Số điện thoại không hợp lệ");
+            request.getRequestDispatcher("userprofile").forward(request, response);
+            return;
+        }
+
         String dobStr = request.getParameter("dob");
         java.sql.Date dob = java.sql.Date.valueOf(dobStr); // hoặc dùng parse như bên trên
         String address = request.getParameter("address");
         String uid = request.getParameter("uid");
-        
+
         DAO dao = new DAO();
         HttpSession session = request.getSession();
-        
+
         boolean update = dao.updateProfile(fname, lname, gender, phone, dob, address, uid);
-        if(update){
+        if (update) {
             User updatedUser = dao.getUserById(uid);
             session.setAttribute("user", updatedUser);
 
             request.setAttribute("message", "Update profile thanh cong");
-            response.sendRedirect("userprofile");
+            request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
         }
-        
-        
 
     }
 
