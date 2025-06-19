@@ -99,18 +99,16 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
                                     <div class="profile-bx text-center">
-                                        <div class="user-profile-thumb">
-                                            <img src="assets/images/profile/pic1.jpg" alt=""/>
-                                        </div>
+                                        
                                         <div class="profile-info">
-                                            <h4>${sessionScope.user.last_name}</h4>
+                                            <h4>${sessionScope.user.last_name} ${sessionScope.user.first_name}</h4>
                                             <span>${sessionScope.user.email}</span>
                                         </div>
 
                                         <div class="profile-tabnav">
                                             <ul class="nav nav-tabs">
                                                 <li class="nav-item">
-                                                    <a class="nav-link" href="EditProfile.jsp"><i class="ti-pencil-alt"></i>Edit Profile</a>
+                                                    <a class="nav-link" href="userprofile"><i class="ti-pencil-alt"></i>Edit Profile</a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link active" href="changepassword"><i class="ti-lock"></i>Change Password</a>

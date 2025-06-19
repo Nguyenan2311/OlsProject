@@ -19,9 +19,13 @@
     <body>
         <div class="container mt-5">
             <h3 class="mb-4">Thêm Ảnh/Video</h3>
+             <c:if test="${not empty error}" >
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
 
-            <form action="editmedia" method="post" enctype="multipart/form-data">
+            <form action="addmedia" method="post" enctype="multipart/form-data">
                 <!-- Tải media mới -->
+                <input type="hidden" name="userId" value="${sessionScope.user.id}" />
                 <div class="mb-3">
                     <label class="form-label">Chọn ảnh/video mới (nếu muốn thay đổi):</label>
                     <input type="file" class="form-control" name="mediaFile" accept="image/*,video/*">

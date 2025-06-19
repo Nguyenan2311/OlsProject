@@ -34,42 +34,13 @@ public class ChangePassword extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
+       
 
-        User user = (User) session.getAttribute("user");
-        DAO dao = new DAO();
+    }
 
-        int userId = user.getId();
-
-        String oldPass = request.getParameter("oldPassword");
-        String newPass = request.getParameter("newPassword");
-        String rePass = request.getParameter("rePassword");
-
-        if (!user.getPassword().equals(oldPass)) {
-            request.setAttribute("error", "Mật khẩu cũ không chính xác");
-            request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
-            return;
-        }
-
-        if (!newPass.equals(rePass)) {
-            request.setAttribute("error", "Mật khẩu mới và xác nhận không khớp");
-            request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
-            return;
-        }
-
-        boolean update = dao.changePassword(userId, newPass);
-
-        if (update) {
-            // Cập nhật mật khẩu trong session (nếu bạn muốn)
-            user.setPassword(newPass);
-            session.setAttribute("user", user);
-
-            request.setAttribute("message", "Đổi mật khẩu thành công");
-        } else {
-            request.setAttribute("error", "Đổi mật khẩu thất bại");
-        }
-        request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
-
+    private boolean isStrongPassword(String password) {
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}:;\"'<>,.?/\\\\|]).{8,}$";
+        return password != null && password.matches(pattern);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -84,7 +55,12 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        request.removeAttribute("error");
+        request.removeAttribute("message"); // nếu có
+
+        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+
     }
 
     /**
@@ -98,7 +74,51 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+         HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
+        DAO dao = new DAO();
+
+        int userId = user.getId();
+
+        String oldPass = request.getParameter("oldPassword");
+        String newPass = request.getParameter("newPassword");
+        String rePass = request.getParameter("rePassword");
+
+        if (!user.getPassword().equals(oldPass)) {
+            request.setAttribute("error", "Mật khẩu cũ không chính xác");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        if (!newPass.equals(rePass)) {
+            request.setAttribute("error", "Mật khẩu mới và xác nhận không khớp");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+        if (!isStrongPassword(newPass)) {
+            request.setAttribute("error", "Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (!@#$%).");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+        if (newPass.equals(oldPass)) {
+            request.setAttribute("error", "Mật khẩu mới không được trùng với mật khẩu cũ.");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        boolean update = dao.changePassword(userId, newPass);
+
+        if (update) {
+            // Cập nhật mật khẩu trong session (nếu bạn muốn)
+            user.setPassword(newPass);
+            session.setAttribute("user", user);
+
+            request.setAttribute("message", "Đổi mật khẩu thành công");
+        } else {
+            request.setAttribute("error", "Đổi mật khẩu thất bại");
+        }
+        request.getRequestDispatcher("changePassword.jsp").forward(request, response);
     }
 
     /**

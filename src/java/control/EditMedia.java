@@ -18,6 +18,13 @@ public class EditMedia extends HttpServlet {
         String mediaId = request.getParameter("mediaId");
         String description = request.getParameter("description");
         Part part = request.getPart("mediaFile");
+        if (part == null || part.getSize() == 0) {
+            request.setAttribute("error", "Vui lòng chọn ảnh hoặc video để cập nhật.");
+            // Bạn cần set media lại nếu không JSP sẽ mất
+            request.setAttribute("media", new DAO().getMediaByid(mediaId));
+            request.getRequestDispatcher("EditMedia.jsp").forward(request, response);
+            return;
+        }
 
         // Lấy tên file gốc
         String fileName = new File(part.getSubmittedFileName()).getName();
@@ -35,12 +42,12 @@ public class EditMedia extends HttpServlet {
         part.write(filePath);
 
         // Đường dẫn tương đối để hiển thị (VD: <img src="uploads/abc.jpg">)
-        String relativePath = "uploads/" + fileName;
+        String mediaPath = "uploads/" + fileName;
         String mediaType = fileName.endsWith(".mp4") ? "video" : "image";
 
         // Cập nhật DB
         DAO dao = new DAO();
-        dao.editMedia(mediaId, relativePath, mediaType, description);
+        dao.editMedia(mediaId, mediaPath, mediaType, description);
 
         response.sendRedirect("userprofile");
     }
