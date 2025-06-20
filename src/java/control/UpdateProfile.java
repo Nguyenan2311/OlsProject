@@ -61,7 +61,7 @@ public class UpdateProfile extends HttpServlet {
             session.setAttribute("user", updatedUser);
 
             request.setAttribute("message", "Update profile thanh cong");
-            request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("userprofile").forward(request, response);
         }
 
     }
