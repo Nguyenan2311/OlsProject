@@ -1,2 +1,11 @@
 /build/
-dist/
+/dist/
+nbproject/private/
+/nbproject/private/
+/*.log
+*.war
+*.class
+/.DS_Store
+/.idea/
+/*.iml
+
