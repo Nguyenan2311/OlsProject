@@ -8,7 +8,7 @@
         </div>
         <nav>
             <a href="home">Home</a>
-            <a href="#">Course</a>
+            <a href="courses">Course</a>
             <a href="bloglist">Blog</a>
             <a href="userprofile">About</a>
         </nav>
