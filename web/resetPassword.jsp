@@ -189,7 +189,7 @@
                 <img src="img/logo.png" alt="alt"/>
             </div>
             <div class="nav-links">
-                <a href="#">Home</a>
+                <a href="home">Home</a>
                 <a href="#">Courses</a>
                 <a href="#">Blog</a>
                 <a href="#">About</a>
