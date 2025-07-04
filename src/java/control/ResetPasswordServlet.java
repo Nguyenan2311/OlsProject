@@ -54,12 +54,8 @@ public class ResetPasswordServlet extends HttpServlet {
             return;
         }
         
-        try {
-            // C?p nh?t password v� ?�nh d?u token ?� s? d?ng
-            user.setPassword(PasswordHasher.hash(newPassword));
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // C?p nh?t password v� ?�nh d?u token ?� s? d?ng
+        user.setPassword(newPassword);
         UserDAO userDAO = new UserDAO();
         if (userDAO.update(user)) {
             resetService.markTokenAsUsed(token);
