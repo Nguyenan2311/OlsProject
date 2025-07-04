@@ -144,12 +144,12 @@
             }
             .category-link:hover, .featured-link:hover {
                 color: #0b5ed7;
-        text-decoration: underline;
+                text-decoration: underline;
             }
             .featured-link.fw-bold {
-        font-weight: 600;
-    }
-    
+                font-weight: 600;
+            }
+
             .contact-info p {
                 margin-bottom: 0.25rem;
             }
@@ -270,7 +270,7 @@
                 <img src="img/logo.png" alt="alt"/>
             </div>
             <div class="nav-links">
-                <a href="#">Home</a>
+                <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
                 <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
                 <a href="#">Blog</a>
                 <a href="#">About</a>
@@ -278,10 +278,18 @@
             <div class="right-section">
                 <div class="search-bar">
                     <input type="text" class="form-control" placeholder="Search courses..." 
-           name="search" value="${searchKeyword}" form="filterForm" 
-           onkeypress="if(event.key === 'Enter') filterForm.submit();">
+                           name="search" value="${searchKeyword}" form="filterForm" 
+                           onkeypress="if (event.key === 'Enter')
+                       filterForm.submit();">
                 </div>
-                <button class="signup-btn">Sign Up</button>
+                <button class="signup-btn">
+                    <c:if test="${not empty sessionScope.user}">
+                        <a href="logout" class="signup-btn">Log out</a>
+                    </c:if>
+                    <c:if test="${empty sessionScope.user}">
+                        <a href="login" class="signup-btn">Log in</a>
+                    </c:if>
+                </button>
             </div>
         </nav>
         <div class="container mt-4">
@@ -453,7 +461,9 @@
                                             </c:if>
                                             <div class="card-body d-flex flex-column">
                                                 <c:if test="${showTitle == 'on'}">
-                                                    <h5 class="card-title">${course.title}</h5>
+                                                    <a href="course-detail?id=${course.id}" class="text-decoration-none">
+                                                        <h5 class="card-title">${course.title}</h5>
+                                                    </a>
                                                 </c:if>
                                                 <c:if test="${showTagline == 'on'}">
                                                     <p class="card-text">${course.tagline}</p>
@@ -474,7 +484,7 @@
                                                     </div>
                                                 </c:if>
                                                 <div class="mt-auto">
-                                                    <a href="#" class="btn btn-register">Register</a>
+                                                    <a href="course-detail?id=${course.id}" class="btn btn-register">Register Now</a>
                                                 </div>
                                             </div>
                                         </div>
