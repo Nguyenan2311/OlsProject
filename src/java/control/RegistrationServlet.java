@@ -55,7 +55,7 @@ public class RegistrationServlet extends HttpServlet {
                 
                 // Không cần validate, chỉ cần ghi danh khóa học
                 User getUser = userDAO.findByEmail(user.getEmail());
-                 // THÊM BƯỚC KIỂM TRA Ở ĐÂY
+                 
             if (registrationDAO.isUserAlreadyEnrolled(user.getId(), courseId)) {
                 session.setAttribute("registrationStatus", "error");
                 session.setAttribute("registrationMessage", "You have already registered for this course. You can find it in 'My Courses'.");
@@ -82,7 +82,7 @@ public class RegistrationServlet extends HttpServlet {
 
                 // --- Bắt đầu Validation ---
                 if (!isEmailValid(email)) {
-                    errors.put("email", "Please enter a valid email address.");
+                    errors.put("email", "Please enter a valid form email address ex: abc@gmail.com");
                 } else if (userDAO.isEmailExists(email)) {
                     errors.put("email", "This email is already registered. Please <a href='login.jsp' class='alert-link'>login</a>.");
                 }
@@ -148,6 +148,14 @@ public class RegistrationServlet extends HttpServlet {
             return false;
         }
         String emailRegex = "^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\\.[a-zA-Z]{2,}$";
+        
+        
+        
+        
+        
+        
+        
+        
         Pattern pat = Pattern.compile(emailRegex);
         return pat.matcher(email).matches();
     }

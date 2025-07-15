@@ -149,7 +149,7 @@
                 <p2>Please login before go to course</p2>
             </div>
 
-            <a href="login.html" class="login-btn">Login</a>
+            <a href="login" class="login-btn">Login</a>
         </div>
     </body>
 </html>
