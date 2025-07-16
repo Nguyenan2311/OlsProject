@@ -17,6 +17,35 @@ public class UserDAO extends DBContext {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (!rs.next()) return null;
+
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            user.setRole_id(rs.getInt("role_id"));
+            user.setDob(rs.getDate("dob"));
+            user.setCreated_date(rs.getDate("created_date"));
+            user.setFirst_name(rs.getString("first_name"));
+            user.setLast_name(rs.getString("last_name"));
+            user.setGender(rs.getString("gender"));
+            user.setPhone(rs.getString("phone"));
+            user.setImage(rs.getString("image_url"));
+            user.setAddress(rs.getString("address"));
+            return user;
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Có thể thay bằng log4j nếu cần
+        }
+        return null;
+    }
+
+    public User findById(int id) {
+        String sql = "SELECT * FROM [User] WHERE id = ?";
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.next()) return null;
+
             User user = new User();
             user.setId(rs.getInt("id"));
             user.setEmail(rs.getString("email"));
@@ -50,33 +79,6 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public User findById(int id) {
-        String sql = "SELECT * FROM [User] WHERE id = ?";
-        try (Connection conn = this.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (!rs.next()) return null;
-            User user = new User();
-            user.setId(rs.getInt("id"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword(rs.getString("password"));
-            user.setRole_id(rs.getInt("role_id"));
-            user.setDob(rs.getDate("dob"));
-            user.setCreated_date(rs.getDate("created_date"));
-            user.setFirst_name(rs.getString("first_name"));
-            user.setLast_name(rs.getString("last_name"));
-            user.setGender(rs.getString("gender"));
-            user.setPhone(rs.getString("phone"));
-            user.setImage(rs.getString("image_url"));
-            user.setAddress(rs.getString("address"));
-            return user;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     public boolean isEmailExists(String email) {
         String sql = "SELECT COUNT(id) FROM [User] WHERE email = ?";
         try (Connection conn = this.getConnection();
@@ -93,9 +95,9 @@ public class UserDAO extends DBContext {
     }
 
     public boolean updateProfile(String firstName, String lastName, String gender, String phone, Date dob, String address, String uid) {
-        String query = "UPDATE [User] SET first_name = ?, last_name = ?, gender = ?, phone = ?, dob = ?, address = ? WHERE id = ?";
+        String sql = "UPDATE [User] SET first_name = ?, last_name = ?, gender = ?, phone = ?, dob = ?, address = ? WHERE id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
             ps.setString(3, gender);
@@ -111,9 +113,9 @@ public class UserDAO extends DBContext {
     }
 
     public User getUserById(String uid) {
-        String query = "SELECT * FROM [User] WHERE id = ?";
+        String sql = "SELECT * FROM [User] WHERE id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, uid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -140,10 +142,10 @@ public class UserDAO extends DBContext {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM [User]";
+        String sql = "SELECT * FROM [User]";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getInt("id"));
@@ -183,6 +185,7 @@ public class UserDAO extends DBContext {
             stmt.setString(6, hashedPassword);
             stmt.setInt(7, defaultRoleId);
             stmt.setInt(8, defaultStatus);
+
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 User newUser = new User();
