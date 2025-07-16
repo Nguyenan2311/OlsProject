@@ -1,6 +1,6 @@
-package control;
+package control.media;
 
-import DAO.DAO;
+import DAO.UserMediaDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,7 +21,7 @@ public class EditMedia extends HttpServlet {
         if (part == null || part.getSize() == 0) {
             request.setAttribute("error", "Vui lòng chọn ảnh hoặc video để cập nhật.");
             // Bạn cần set media lại nếu không JSP sẽ mất
-            request.setAttribute("media", new DAO().getMediaByid(mediaId));
+            request.setAttribute("media", new UserMediaDAO().getMediaByid(mediaId));
             request.getRequestDispatcher("EditMedia.jsp").forward(request, response);
             return;
         }
@@ -46,8 +46,8 @@ public class EditMedia extends HttpServlet {
         String mediaType = fileName.endsWith(".mp4") ? "video" : "image";
 
         // Cập nhật DB
-        DAO dao = new DAO();
-        dao.editMedia(mediaId, mediaPath, mediaType, description);
+        UserMediaDAO userMediaDAO = new UserMediaDAO();
+        userMediaDAO.editMedia(mediaId, mediaPath, mediaType, description);
 
         response.sendRedirect("userprofile");
     }

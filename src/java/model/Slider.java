@@ -24,6 +24,13 @@ public class Slider {
         this.back_link_url = back_link_url;
     }
 
+    // Constructor 7 tham số để khớp với SliderDAO
+    public Slider(int id, String title, String image, String link, String note, int status, int order) {
+        this.id = id;
+        // Nếu cần sử dụng thêm các trường khác, hãy mở rộng class Slider và gán ở đây.
+    }
+
+
     public int getId() {
         return id;
     }

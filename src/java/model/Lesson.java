@@ -15,17 +15,18 @@ public class Lesson {
     private  String title;
     private  int chapterId;
     private int order;
+    private  int subChapterId;;
 
     public Lesson() {
     }
 
-    public Lesson(int id, int status, String title, int chapterId, int order) {
+    public Lesson(int id, int status, String title, int chapterId, int order, int subChapterId) {
         this.id = id;
         this.status = status;
-        
         this.title = title;
         this.chapterId = chapterId;
         this.order = order;
+        this.subChapterId = subChapterId;
     }
 
     public int getId() {
@@ -43,7 +44,6 @@ public class Lesson {
     public void setStatus(int status) {
         this.status = status;
     }
-
 
     public String getTitle() {
         return title;
@@ -69,10 +69,22 @@ public class Lesson {
         this.order = order;
     }
 
+    public int getSubChapterId() {
+        return subChapterId;
+    }
+
+    public void setSubChapterId(int subChapterId) {
+        this.subChapterId = subChapterId;
+    }
+
     @Override
     public String toString() {
-        return "Lesson{" + "id=" + id + ", status=" + status + ", title=" + title + ", chapterId=" + chapterId + ", order=" + order + '}';
+        return "Lesson{" + "id=" + id + ", status=" + status + ", title=" + title + ", chapterId=" + chapterId + ", order=" + order + ", subChapterId=" + subChapterId + '}';
     }
+
+    
+
+    
 
     
    

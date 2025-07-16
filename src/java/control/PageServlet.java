@@ -4,7 +4,7 @@
  */
 package control;
 
-import DAO.DAO;
+import DAO.BlogDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -36,13 +36,13 @@ public class PageServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        DAO dao = new DAO();
+        BlogDAO blogDAO = new BlogDAO();
         String indexPage = request.getParameter("index");
         int index = Integer.parseInt(indexPage);
-        List<BlogDTO> listByPage = dao.pagingPost(index);
-        List<BlogCategory> listBC = dao.getListCategory();
-        List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
-        int count = dao.getTotalBlog();
+        List<BlogDTO> listByPage = blogDAO.pagingPost(index);
+        List<BlogCategory> listBC = blogDAO.getListCategory();
+        List<Blog> listLastPost = blogDAO.getLastPost();// lay danh sach post moi nhat
+        int count = blogDAO.getTotalBlog();
         int endPage = count / 3;
         if (endPage % 3 != 0) {
             endPage++;

@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package control.media;
 
-import DAO.DAO;
+import DAO.UserMediaDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -34,9 +34,9 @@ public class MediaDetail extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String mediaId = request.getParameter("mid");
-        DAO dao = new DAO();
+        UserMediaDAO userMediaDAO = new UserMediaDAO();
 
-        UserMedia media = dao.getMediaByid(mediaId);
+        UserMedia media = userMediaDAO.getMediaByid(mediaId);
         request.setAttribute("media", media);
 
         request.getRequestDispatcher("EditMedia.jsp").forward(request, response);
