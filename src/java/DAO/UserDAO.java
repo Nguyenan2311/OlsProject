@@ -5,8 +5,7 @@ import model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class UserDAO extends DBContext {
     
@@ -35,7 +34,7 @@ public class UserDAO extends DBContext {
             return user;
         }
         } catch (Exception ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return null;
     }
@@ -50,7 +49,7 @@ public class UserDAO extends DBContext {
             
             return stmt.executeUpdate() > 0;
         } catch (Exception ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
             return false;
         }
     }
@@ -80,7 +79,7 @@ public class UserDAO extends DBContext {
             return user;
         }
     } catch (Exception ex) {
-        Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, "Error finding user by ID: " + id, ex);
+        
     }
     return null;
 }
@@ -98,7 +97,7 @@ public class UserDAO extends DBContext {
             ps.setString(7, uid);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
+            
             return false;
         }
     }
@@ -126,7 +125,6 @@ public class UserDAO extends DBContext {
                 return user;
             }
         } catch (Exception e) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
@@ -154,7 +152,6 @@ public class UserDAO extends DBContext {
                 users.add(user);
             }
         } catch (Exception e) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return users;
     }
