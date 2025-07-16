@@ -7,8 +7,8 @@
             <img src="img/logo.png" alt="alt" height="40" width="120"/>
         </div>
         <nav>
-            <a href="home">Home</a>
-            <a href="courses">Course</a>
+            <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
+           <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
             <a href="bloglist">Blog</a>
             <a href="userprofile">About</a>
         </nav>
@@ -27,7 +27,7 @@
                 <a href="logout" class="signup-button" style="color: white ; background-color: red">Log out</a>
             </c:if>
                  <c:if test="${empty sessionScope.user}">
-                <a href="login" class="signup-button">Log in</a>
+                <a href="login" class="signup-b"style="color: white ; background-color: red">Log in</a>
             </c:if>
                 
             

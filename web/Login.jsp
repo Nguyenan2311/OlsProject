@@ -35,7 +35,7 @@
             
             <!-- Links -->
             <div class="links">
-                <a href="#" class="link">You don’t have account? sign up</a>
+                <a href="register" class="link">You don’t have account? sign up</a>
                 <a href="RequestResetPasswordServlet" class="link">Foget password</a>
             </div>
             
