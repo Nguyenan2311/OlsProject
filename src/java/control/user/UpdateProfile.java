@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package control.user;
 
-import DAO.DAO;
+import DAO.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -52,12 +52,12 @@ public class UpdateProfile extends HttpServlet {
         String address = request.getParameter("address");
         String uid = request.getParameter("uid");
 
-        DAO dao = new DAO();
+        UserDAO userDAO = new UserDAO();
         HttpSession session = request.getSession();
 
-        boolean update = dao.updateProfile(fname, lname, gender, phone, dob, address, uid);
+        boolean update = userDAO.updateProfile(fname, lname, gender, phone, dob, address, uid);
         if (update) {
-            User updatedUser = dao.getUserById(uid);
+            User updatedUser = userDAO.getUserById(uid);
             session.setAttribute("user", updatedUser);
 
             request.setAttribute("message", "Update profile thanh cong");

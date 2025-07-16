@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package control.blog;
 
-import DAO.DAO;
+import DAO.BlogDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -21,8 +21,8 @@ import model.BlogDTO;
  *
  * @author An_PC
  */
-@WebServlet(name = "BlogList", urlPatterns = {"/bloglist"})
-public class BlogList extends HttpServlet {
+@WebServlet(name = "BlogCategoryServlet", urlPatterns = {"/blogcategory"})
+public class BlogCategoryServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,27 +36,33 @@ public class BlogList extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String blogCategoryId = request.getParameter("cid");
         String indexPage = request.getParameter("index");
+
+        BlogDAO blogDAO = new BlogDAO();
+       
+
         if (indexPage == null) {
             indexPage = "1";
         }
         int index = Integer.parseInt(indexPage);
-        DAO dao = new DAO();
-        int count = dao.getTotalBlog();
+
+        int count = blogDAO.countByCategory(blogCategoryId);
         int endPage = count / 3;
         if (count % 3 != 0) {
             endPage++;
         }
-        List<BlogDTO> listByPage = dao.pagingPost(index);
-        List<BlogCategory> listBC = dao.getListCategory();
-        List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
-
+        List<BlogDTO> listPost = blogDAO.getListPostByCategory(blogCategoryId, index);
+        List<BlogCategory> listBC = blogDAO.getListCategory();
+        List<Blog> listLastPost = blogDAO.getLastPost();// lay danh sach post moi nhat
+        
+        request.setAttribute("listPost", listPost);
         request.setAttribute("endPage", endPage);
-        request.setAttribute("listPost", listByPage);
         request.setAttribute("listBC", listBC);
-        request.setAttribute("tag", index);
         request.setAttribute("listLastPost", listLastPost);
-
+        request.setAttribute("type", "category");
+        request.setAttribute("value", blogCategoryId);
+        request.setAttribute("tag", index);
         request.getRequestDispatcher("BlogList.jsp").forward(request, response);
     }
 

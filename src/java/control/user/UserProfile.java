@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package control;
+package control.user;
 
-import DAO.DAO;
+import DAO.UserMediaDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,13 +13,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.User;
+import model.UserMedia;
 
 /**
  *
  * @author An_PC
  */
-@WebServlet(name="DeleteMedia", urlPatterns={"/deletemedia"})
-public class DeleteMedia extends HttpServlet {
+@WebServlet(name="UserProfile", urlPatterns={"/userprofile"})
+public class UserProfile extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -31,10 +35,22 @@ public class DeleteMedia extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String mediaId = request.getParameter("mid");
-        DAO dao = new DAO();
-        dao.deleteMediaById(mediaId);
-        response.sendRedirect("userprofile");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(user==null){
+            response.sendRedirect("login");
+            return;
+        }
+        int userId = user.getId();
+        
+        UserMediaDAO userMediaDAO = new UserMediaDAO();
+        UserMedia media = new UserMedia();
+        List <UserMedia> listMedia = userMediaDAO.getMedia(userId);
+        
+        request.setAttribute("listM", listMedia);
+        request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
+        
+                
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

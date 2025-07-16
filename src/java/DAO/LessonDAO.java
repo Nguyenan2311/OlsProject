@@ -15,6 +15,7 @@ import model.CourseDTO;
 import model.Lesson;
 import model.LessonContent;
 import model.Module;
+import model.SubChapter;
 
 /**
  *
@@ -55,7 +56,7 @@ public class LessonDAO extends DBContext {
 
     public List<Module> getModuleByCourse(int courseId) {
         List<Module> list = new ArrayList<>();
-        String query = "select* from module where course_id = ?";
+        String query = "select* from module where course_id = ? order by [order] asc";
         try {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
@@ -75,7 +76,7 @@ public class LessonDAO extends DBContext {
 
     public List<Chapter> getChapterByModule(int moduleId) {
         List<Chapter> list = new ArrayList<>();
-        String query = "select* from Chapter where module_id = ?";
+        String query = "select* from Chapter where module_id = ? order by [order] asc";
         try {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
@@ -98,19 +99,21 @@ public class LessonDAO extends DBContext {
 
     public List<Lesson> getLessonByChapter(int chapterId) {
         List<Lesson> list = new ArrayList<>();
-        String query = "select* from Lesson where chapter_id = ?";
+        String query = "SELECT * FROM Lesson WHERE chapter_id = ?";
         try {
             conn = new DBContext().getConnection();//mo ket noi voi sql
             ps = conn.prepareStatement(query);
             ps.setInt(1, chapterId);
             rs = ps.executeQuery();
             while (rs.next()) {
+                
+               
                 list.add(new Lesson(rs.getInt(1),
                         rs.getInt(2),
-                        
                         rs.getString(3),
                         rs.getInt(4),
-                        rs.getInt(5)));
+                        rs.getInt(5),
+                        rs.getInt(6)));
             }
         } catch (Exception e) {
         }
@@ -145,16 +148,64 @@ public class LessonDAO extends DBContext {
         return lc;
     }
 
+    public List<SubChapter> getSubChapterByChapter(int chapterId) {
+        List<SubChapter> list = new ArrayList<>();
+        String query = "SELECT * FROM SubChapter WHERE chapter_id = ? ORDER BY [order] ASC";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, chapterId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new SubChapter(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5)
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Lesson> getLessonBySubChapter(int subChapterId) {
+        List<Lesson> list = new ArrayList<>();
+        String query = "SELECT * FROM Lesson WHERE sub_chapter_id = ? ORDER BY [order] ASC";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, subChapterId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Lesson(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5),
+                        rs.getObject("sub_chapter_id") != null ? rs.getInt("sub_chapter_id") : null
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         LessonDAO dao = new LessonDAO();
 
         List<CourseDTO> listC = dao.getCourse();
-        List<Lesson> listL = dao.getLessonByChapter(1);
+        List<Lesson> listL = dao.getLessonByChapter(2);
         List<Module> listM = dao.getModuleByCourse(1);
+        List<SubChapter> listS = dao.getSubChapterByChapter(1);
 
         for (Lesson o : listL) {
             System.out.println(o);
-            
+
         }
         System.out.println("-----------");
         LessonContent less = dao.getLessonContentByLessonId(1);

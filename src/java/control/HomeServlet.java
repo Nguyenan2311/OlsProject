@@ -4,7 +4,9 @@
  */
 package control;
 
-import DAO.DAO;
+import DAO.SliderDAO;
+import DAO.CourseDTODAO;
+import DAO.BlogDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -39,11 +41,13 @@ public class HomeServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
            
-            DAO dao = new DAO();
-            List<Slider> listSlider = dao.getSlider();// lay slider tu dao
-            List<Blog> listPost = dao.getPost();// lay danh sach post tu dao
-            List<Blog> listLastPost = dao.getLastPost();// lay danh sach post moi nhat
-            List<CourseDTO> listCourse = dao.getCourse(); // lay danh sach khoa hoc
+            SliderDAO sliderDAO = new SliderDAO();
+            CourseDTODAO courseDTODAO = new CourseDTODAO();
+            List<Slider> listSlider = sliderDAO.getSlider();// lay slider tu DAO mới
+            BlogDAO blogDAO = new BlogDAO();
+            List<Blog> listPost = blogDAO.getPost();// lấy danh sách post từ BlogDAO
+            List<Blog> listLastPost = blogDAO.getLastPost();// lấy danh sách post mới nhất từ BlogDAO
+            List<CourseDTO> listCourse = courseDTODAO.getCourse(); // lay danh sach khoa hoc từ DAO mới
             
             request.setAttribute("listSlider", listSlider);
             request.setAttribute("listPost", listPost);

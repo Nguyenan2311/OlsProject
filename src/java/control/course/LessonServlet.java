@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package control.course;
 
 import DAO.CourseDAO;
 import DAO.LessonDAO;
@@ -22,6 +22,7 @@ import model.Course;
 import model.Lesson;
 import model.LessonContent;
 import model.Module;
+import model.SubChapter;
 
 /**
  *
@@ -42,36 +43,60 @@ public class LessonServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
+
         LessonDAO dao = new LessonDAO();
         CourseDAO daoC = new CourseDAO();
         int courseId = Integer.parseInt(request.getParameter("courseId"));
+
         List<Module> listModule = dao.getModuleByCourse(courseId);
         List<Chapter> listChapter = new ArrayList<>();
         List<Lesson> listLesson = new ArrayList<>();
         List<LessonContent> listLessonContent = new ArrayList<>();
+        List<SubChapter> listSubChapter = new ArrayList<>();
+
         Course course = daoC.getCourseById(courseId);
+
         for (Module module : listModule) {
             List<Chapter> chapters = dao.getChapterByModule(module.getId());
             listChapter.addAll(chapters);
 
             for (Chapter chapter : chapters) {
-                List<Lesson> lessons = dao.getLessonByChapter(chapter.getId());
-                listLesson.addAll(lessons);
 
-                for (Lesson lesson : lessons) {
+                // Lay lesson trong chapter
+                List<Lesson> lessonsDirect = dao.getLessonByChapter(chapter.getId());
+                listLesson.addAll(lessonsDirect);
+                for (Lesson lesson : lessonsDirect) {
                     LessonContent content = dao.getLessonContentByLessonId(lesson.getId());
                     if (content != null) {
                         listLessonContent.add(content);
                     }
                 }
+
+                // Lay sub chapter
+                List<SubChapter> subChapters = dao.getSubChapterByChapter(chapter.getId());
+                listSubChapter.addAll(subChapters);
+
+                // Lay lesson trong sub chapter
+                for (SubChapter sub : subChapters) {
+                    List<Lesson> lessonsFromSub = dao.getLessonBySubChapter(sub.getId());
+                    listLesson.addAll(lessonsFromSub);
+                    for (Lesson lesson : lessonsFromSub) {
+                        LessonContent content = dao.getLessonContentByLessonId(lesson.getId());
+                        if (content != null) {
+                            listLessonContent.add(content);
+                        }
+                    }
+                }
             }
         }
 
-        request.setAttribute("listModule", listModule);
         request.setAttribute("course", course);
+        request.setAttribute("listModule", listModule);
         request.setAttribute("listChapter", listChapter);
+        request.setAttribute("listSubChapter", listSubChapter);
         request.setAttribute("listLesson", listLesson);
         request.setAttribute("listLessonContent", listLessonContent);
+
         request.getRequestDispatcher("Lesson.jsp").forward(request, response);
     }
 

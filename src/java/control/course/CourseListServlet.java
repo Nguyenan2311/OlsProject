@@ -1,4 +1,5 @@
-package control;
+package control.course;
+
 import DAO.CourseDAO.CourseListItem;
 import java.io.IOException;
 import java.util.List;
@@ -10,15 +11,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 @WebServlet("/courses")
 public class CourseListServlet extends HttpServlet {
+
     private static final Logger LOGGER = Logger.getLogger(CourseListServlet.class.getName());
     private CourseService courseService;
+
     @Override
     public void init() throws ServletException {
         super.init();
         this.courseService = new CourseService();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,11 +71,13 @@ public class CourseListServlet extends HttpServlet {
             request.getRequestDispatcher("/courseList.jsp").forward(request, response);
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
     }
+
     private void setRequestAttributes(HttpServletRequest request, List<CourseListItem> courses,
             List<String> categories, List<model.Tagline> taglines,
             String searchKeyword, String category, String sortBy, String tag,

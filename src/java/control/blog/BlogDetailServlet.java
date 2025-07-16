@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package control;
+package control.blog;
 
-import DAO.DAO;
+import DAO.BlogDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -36,10 +36,10 @@ public class BlogDetailServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String bid = request.getParameter("bid");
-        DAO dao = new DAO();
-        BlogDTO blog = dao.getBlogByid(bid);
-        List<BlogCategory> listBC = dao.getListCategory();
-        List<Blog> listLastPost = dao.getLastPost();
+        BlogDAO blogDAO = new BlogDAO();
+        BlogDTO blog = blogDAO.getBlogByid(bid);
+        List<BlogCategory> listBC = blogDAO.getListCategory();
+        List<Blog> listLastPost = blogDAO.getLastPost();
         request.setAttribute("listBC", listBC);
         request.setAttribute("listLastPost", listLastPost);
         request.setAttribute("blog", blog);
@@ -78,9 +78,4 @@ public class BlogDetailServlet extends HttpServlet {
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
