@@ -148,7 +148,7 @@
             </div>
         </c:if>
 
-        <form action="register" method="POST">
+        <form action="register" method="POST" novalidate>
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="fullName" name="fullName" value="<c:out value='${param.fullName}'/>" required>

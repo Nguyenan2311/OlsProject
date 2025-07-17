@@ -211,7 +211,7 @@
                 </div>
             <% } %>
 
-            <form action="ResetPasswordServlet" method="POST" id="passwordForm">
+            <form action="ResetPasswordServlet" method="POST" id="passwordForm" novalidate>
                 <input type="hidden" name="token" value="<%= request.getParameter("token") %>">
                 
                 <div class="form-group">
@@ -233,27 +233,6 @@
         </div>
 
         <script>
-            function validatePassword(input) {
-                const passwordError = document.getElementById("passwordError");
-                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-                
-                if (input.value.length === 0) {
-                    passwordError.style.display = "none";
-                    input.setCustomValidity("");
-                    return;
-                }
-                
-                if (!regex.test(input.value)) {
-                    passwordError.textContent = "Password must be at least 8 characters long and include uppercase, lowercase letters, and a number!";
-                    passwordError.style.display = "block";
-                    input.setCustomValidity("Invalid password");
-                } else {
-                    passwordError.style.display = "none";
-                    input.setCustomValidity("");
-                }
-                
-                checkPasswordMatch();
-            }
             
             function checkPasswordMatch() {
                 const password = document.getElementById("newPassword").value;
