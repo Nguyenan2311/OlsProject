@@ -274,6 +274,12 @@
                 <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
                 <a href="#">Blog</a>
                 <a href="#">About</a>
+                <%-- ========================================================== --%>
+        <%--     THÊM LINK "MY REGISTRATIONS" CHỈ KHI ĐÃ ĐĂNG NHẬP      --%>
+        <%-- ========================================================== --%>
+        <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
+        </c:if>
             </div>
             <div class="right-section">
                 <div class="search-bar">

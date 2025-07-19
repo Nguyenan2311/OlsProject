@@ -369,7 +369,7 @@
 
                             <%-- SỬA: Thay thế thẻ <a> bằng thẻ <button> để mở modal --%>
                             <div class="text-center mt-5">
-                                <button type="button" class="btn btn-success btn-lg px-5 py-3" 
+                                <button id = "action2"type="button" class="btn btn-success btn-lg px-5 py-3 " 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#registrationModal">
                                     Register Now
@@ -538,6 +538,18 @@
             }
         </c:if>
     })();
+
+    window.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const action = params.get("action");
+
+        if (action === "summit") {
+            // Gọi hàm tương ứng hoặc click nút
+            document.getElementById("action2")?.click();
+        }
+    });
+
+
 </script>
     </body>
 </html>
