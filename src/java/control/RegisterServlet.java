@@ -83,13 +83,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // Validate email length (additional check)
-        if (email.length() > 100) {
-            request.setAttribute("message", "Email address is too long (maximum 100 characters).");
-            request.setAttribute("status", "error");
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
-            return;
-        }
+        
 
         try {
             // Kiểm tra email đã tồn tại chưa
