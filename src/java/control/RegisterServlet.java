@@ -115,7 +115,7 @@ public class RegisterServlet extends HttpServlet {
 
             if (emailSent) {
                 // Hiển thị thông báo thành công
-                request.setAttribute("message", "Registration successful! Please check your email (" + email + ") to set your password and complete the process.");
+                request.getRequestDispatcher("/resetPasswordSent.jsp").forward(request, response);
                 request.setAttribute("status", "success");
             } else {
                 // Hiển thị lỗi nếu không gửi được email

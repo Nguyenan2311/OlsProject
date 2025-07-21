@@ -43,19 +43,21 @@ public class UserDAO extends DBContext {
     }
 
     public boolean update(User user) {
-        String sql = "UPDATE [User] SET password = ? WHERE id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    String sql = "UPDATE [User] SET password = ?, status = 1 WHERE id = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, user.getPassword());
-            stmt.setInt(2, user.getId());
-            return stmt.executeUpdate() > 0;
+        stmt.setString(1, user.getPassword());
+        stmt.setInt(2, user.getId());
+        
+        return stmt.executeUpdate() > 0;
 
-        } catch (Exception ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
+    } catch (Exception ex) {
+        Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
     }
+}
+
 
     public User findById(int id) {
         String sql = "SELECT * FROM [User] WHERE id = ?";
@@ -111,7 +113,7 @@ public class UserDAO extends DBContext {
                      "INSERTED.gender, INSERTED.role_id, INSERTED.created_date, INSERTED.status " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)";
         int defaultRoleId = 2;
-        int defaultStatus = 1;
+        int defaultStatus = 0;
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

@@ -11,6 +11,9 @@
            <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
             <a href="bloglist">Blog</a>
             <a href="userprofile">About</a>
+            <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link active">My Registrations</a>
+        </c:if>
         </nav>
         <div class="header-right">
             <!-- Form tìm kiếm -->

@@ -247,6 +247,9 @@
                 <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
                 <a href="#">Blog</a>
                 <a href="#">About</a>
+                <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
+        </c:if>
             </div>
             <div class="right-section">
                 <div class="search-bar">
@@ -280,9 +283,10 @@
                     </div>
                     <div class="sidebar-section">
                         <h5>Categories</h5>
-                        <c:forEach var="cat" items="${categories}">
-                            <a href="courses?category=${cat}" class="category-link">${cat}</a>
-                        </c:forEach>
+                         <a href="courses?search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">All Categories</a>
+                    <a href="courses?category=English&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">English</a>
+                    <a href="courses?category=Japanese&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">Japanese</a>
+                    <a href="courses?category=Korean&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off"class="category-link">Korean</a>
                     </div>
                     <div class="sidebar-section">
                         <h5>Featured</h5>

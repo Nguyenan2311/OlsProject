@@ -39,7 +39,7 @@ public class CourseRegistrationServlet extends HttpServlet {
         String search = request.getParameter("search");
         String category = request.getParameter("category");
         String pageStr = request.getParameter("page");
-
+       
         int page = 1;
         int pageSize = 10;
 
