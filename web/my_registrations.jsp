@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
             --primary-color: #6366f1;
@@ -32,136 +33,98 @@
             padding: 0;
             box-sizing: border-box;
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-
-        .main-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            margin: 20px;
-            overflow: hidden;
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .sidebar {
-            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 30px 25px;
-            border-right: 1px solid var(--border-color);
-            min-height: 100vh;
-            position: relative;
-        }
         
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* === Navbar Styling === */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .logo {
+            height: 45px;
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 200%;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            margin-left: 20px;
+            margin-right: auto;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 25px;
+        }
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* SỬA: Chỉ áp dụng cho ô search trong navbar */
+        .navbar .search-bar .form-control {
+            width: 300px; /* Giảm chiều rộng cho hợp lý */
+            height: 50px;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .signup-btn {
+            padding: 8px 20px;
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 150px;
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        /* === Sidebar Styling giống courseDetail === */
         .sidebar-section {
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
         }
         
         .sidebar-section h5 {
-            color: var(--dark-color);
             font-weight: 600;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 15px;
         }
         
-        .sidebar-section h5 i {
-            color: var(--primary-color);
-        }
-
-        .search-box .input-group {
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-box .form-control {
-            border: 0;
-            padding: 15px 20px;
-            background: white;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .search-box .form-control:focus {
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            border: 0;
-        }
-
-        .search-box .btn {
-            border: 0;
-            background: var(--primary-color);
-            padding: 15px 25px;
-            transition: all 0.3s ease;
-        }
-
-        .search-box .btn:hover {
-            background: #5855eb;
-            transform: translateY(-1px);
-        }
-
-        .category-list .list-group {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .category-list .list-group-item {
-            border: 0;
-            padding: 15px 20px;
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-        
-        .category-list .list-group-item.active {
-            background: var(--primary-color);
-            transform: translateX(5px);
-        }
-
-        .category-list .list-group-item.active a {
-            color: white;
-        }
-
-        .category-list .list-group-item:last-child {
-            border-bottom: 0;
-        }
-
-        .category-list .list-group-item:hover:not(.active) {
-            background: var(--secondary-color);
-            transform: translateX(5px);
-        }
-
-        .category-list a {
+        .category-link {
             text-decoration: none;
-            color: var(--dark-color);
-            font-weight: 500;
             display: block;
-            transition: all 0.3s ease;
+            padding: 0.25rem 0;
+            color: #333;
         }
         
+        .category-link:hover {
+            color: #6366f1;
+        }
+
         .main-content {
-            padding: 40px 30px;
-            background: white;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .page-header {
@@ -282,7 +245,6 @@
         .status-badge.cancelled { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
         .status-badge.expired { background: rgba(100, 116, 139, 0.1); color: #64748b; }
         
-        /* --- NEW/UPDATED --- */
         .btn-action {
             padding: 8px 16px;
             border-radius: 8px;
@@ -308,7 +270,7 @@
             color: white;
         }
         .btn-edit:hover {
-            background: #0891b2; /* Darker accent */
+            background: #0891b2;
             color: white;
         }
         
@@ -317,10 +279,9 @@
             color: white;
         }
         .btn-cancel:hover {
-            background: #dc2626; /* Darker danger */
+            background: #dc2626;
             color: white;
         }
-        /* --- END NEW/UPDATED --- */
 
         .pagination-container {
             display: flex;
@@ -375,53 +336,80 @@
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="row g-0">
-            <!-- Sidebar -->
-            <div class="col-lg-3 col-md-4">
-                <div class="sidebar">
-                    <!-- Search Box -->
-                    <div class="sidebar-section search-box">
-                        <h5><i class="fas fa-search"></i> Search</h5>
-                        <form method="get" action="user_registrations">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control" placeholder="Search by subject..." value="${param.search}">
-                                <input type="hidden" name="category" value="${param.category}">
-                                <button class="btn" type="submit">
-                                    <i class="fas fa-search text-white"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Subject Categories -->
-                    <div class="sidebar-section category-list">
-                        <h5><i class="fas fa-folder-open"></i> Categories</h5>
-                        <ul class="list-group">
-                            <li class="list-group-item ${empty param.category ? 'active' : ''}">
-                                <a href="user_registrations?search=${param.search}">All Categories</a>
-                            </li>
-                            <li class="list-group-item ${param.category == 'English' ? 'active' : ''}">
-                                <a href="user_registrations?category=English&search=${param.search}">English</a>
-                            </li>
-                            <li class="list-group-item ${param.category == 'Japanese' ? 'active' : ''}">
-                                <a href="user_registrations?category=Japanese&search=${param.search}">Japanese</a>
-                            </li>
-                             <li class="list-group-item ${param.category == 'Korean' ? 'active' : ''}">
-                                <a href="user_registrations?category=Korean&search=${param.search}">Korean</a>
-                            </li>
-                        </ul>
-                    </div>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="img/logo.png" alt="alt"/>
+        </div>
+        <div class="nav-links">
+            <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
+            <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
+            <a href="#">Blog</a>
+            <a href="#">About</a>
+            <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
+        </c:if>
+        </div>
+        <div class="right-section">
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Search courses..." 
+                       name="search" value="${searchKeyword}" form="filterForm" 
+                       onkeypress="if (event.key === 'Enter')
+                                   filterForm.submit();">
+            </div>
+            <button class="signup-btn">
+            <c:if test="${not empty sessionScope.user}">
+            <a href="logout" class="signup-btn">Log out</a>
+        </c:if>
+             <c:if test="${empty sessionScope.user}">
+            <a href="login" class="signup-btn">Log in</a>
+        </c:if>
+            </button>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center" style="font-weight: 700;">My Course Registrations</h1>
+        <div class="row">
+            <!-- ===== LEFT SIDEBAR (Updated to match courseDetail) ===== -->
+            <div class="col-lg-3">
+                <div class="sidebar-section">
+                    <h5>Search course</h5>
+                    <form method="get" action="user_registrations">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search..." value="${param.search}">
+                            <input type="hidden" name="category" value="${param.category}">
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h5>Categories</h5>
+                   
+                </div> 
+                    <a href="courses?search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">All Categories</a>
+                    <a href="courses?category=English&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">English</a>
+                    <a href="courses?category=Japanese&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">Japanese</a>
+                    <a href="courses?category=Korean&search=&tag=&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off"class="category-link">Korean</a>
+                
+                <div class="sidebar-section">
+                    <h5>Featured</h5>
+                   <a href="courses?search=&category=&sortBy=title&tag=1&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Master English Basics</a>
+                  <a href="courses?tag=2&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Start Your Japanese Journey</a>
+                   <a href="courses?tag=3&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Prepare for TOPIK I</a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h5>Contact</h5>
+                    <p class="mb-1">Email: abc@gmail.com</p>
+                    <p class="mb-1">Phone: 012345678</p>
+                    <div><a href="#">Facebook</a> | <a href="#">Github</a> | <a href="#">Youtube</a></div>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9 col-md-8">
+            <!-- ===== RIGHT CONTENT AREA ===== -->
+            <div class="col-lg-9">
                 <div class="main-content">
-                    <div class="page-header">
-                        <h2><i class="fas fa-graduation-cap"></i> My Course Registrations</h2>
-                    </div>
-                    
                     <c:if test="${not empty message}">
                         <div class="alert alert-${messageType == 'success' ? 'success' : 'danger'} alert-dismissible fade show" role="alert">
                             ${message}
@@ -492,9 +480,7 @@
                                                         <fmt:formatDate value="${reg.validTo}" pattern="MMM dd, yyyy"/>
                                                     </td>
                                                     <td>
-                                                        <%-- === ACTION LOGIC UPDATED HERE === --%>
                                                         <c:choose>
-                                                            <%-- Case 1: If status is 'Submitted', show Edit and Cancel buttons --%>
                                                             <c:when test="${reg.status == 'Submitted'}">
                                                                 <a href="course-detail?id=${reg.courseId}&action=summit" class="btn-action btn-edit me-2">
                                                                     <i class="fas fa-edit"></i> Edit
@@ -507,12 +493,10 @@
                                                                     </button>
                                                                 </form>
                                                             </c:when>
-                                                            <%-- Case 2: For any other status (Active, Expired, Cancelled), show no actions --%>
                                                             <c:otherwise>
                                                                 <span class="text-muted fst-italic small">No actions</span>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                         <%-- === END OF UPDATED ACTION LOGIC === --%>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
