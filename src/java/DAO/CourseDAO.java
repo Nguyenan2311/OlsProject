@@ -525,6 +525,44 @@ extends DBContext {
             throw new Exception("Could not retrieve price package by ID.", e);
         }
     }
+ 
+ // Trong file CourseDAO.java
+
+// Thay đổi kiểu trả về từ List<Course> thành List<CourseListItem>
+public List<CourseListItem> getActiveCoursesByCustomerId(int customerId) {
+    List<CourseListItem> list = new ArrayList<>();
+    // Cập nhật câu lệnh SQL để JOIN các bảng cần thiết và lấy đủ thông tin
+    String sql = "SELECT c.id, c.subtitle as title, c.description, t.name as tagline, ct.thumbnail_url " +
+                 "FROM Course c " +
+                 "JOIN PersonalCourse pc ON c.id = pc.course_id " +
+                 "LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id " +
+                 "LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id " +
+                 "LEFT JOIN Tagline t ON ctt.tagline_id = t.id " +
+                 "WHERE pc.customer_id = ? AND pc.status = 1";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, customerId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                // Tạo đối tượng CourseListItem thay vì Course
+                CourseListItem courseItem = new CourseListItem();
+                courseItem.setId(rs.getInt("id"));
+                courseItem.setTitle(rs.getString("title")); // JSP đang dùng subtitle, nên đổi tên hoặc dùng title
+                courseItem.setDescription(rs.getString("description"));
+                courseItem.setTagline(rs.getString("tagline"));
+                courseItem.setThumbnailUrl(rs.getString("thumbnail_url"));
+                
+                list.add(courseItem);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
     public static class CourseListItem {
         private int id;

@@ -265,39 +265,70 @@
         </style>
     </head>
     <body>
-        <nav class="navbar">
-            <div class="logo">
-                <img src="img/logo.png" alt="alt"/>
+       <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
+            <img src="img/logo.png" alt="EDEMY Logo" style="height: 45px; max-width: 200px; object-fit: contain;">
+        </a>
+
+        <div class="collapse navbar-collapse">
+            <div class="nav-links navbar-nav me-auto mb-2 mb-lg-0">
+                <a href="${pageContext.request.contextPath}/home" class="nav-link">Home</a>
+                <a href="${pageContext.request.contextPath}/courses" class="nav-link">Courses</a>
+                <a href="#" class="nav-link">Blog</a>
+                <a href="#" class="nav-link">About</a>
+
+                <%-- KHI USER ĐÃ ĐĂNG NHẬP, HIỂN THỊ MENU DROPDOWN --%>
+                <c:if test="${not empty sessionScope.user}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            My Learning
+                        </a>
+                        <ul class="dropdown-menu">
+                            <%-- 1. Cầu nối vào khóa học --%>
+                            <li>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-course">
+                                    <i class="bi bi-collection-play-fill me-2"></i>My Courses
+                                </a>
+                            </li>
+                          
+                             <%-- 3. Lịch sử đăng ký chi tiết --%>
+                            <li>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-registrations">
+                                    <i class="bi bi-receipt-cutoff me-2"></i>Registration History
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                             <%-- 4. Các liên kết khác như Profile... --%>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person-circle me-2"></i>My Profile
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
             </div>
-            <div class="nav-links">
-                <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
-                <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
-                <a href="#">Blog</a>
-                <a href="#">About</a>
-                <%-- ========================================================== --%>
-        <%--     THÊM LINK "MY REGISTRATIONS" CHỈ KHI ĐÃ ĐĂNG NHẬP      --%>
-        <%-- ========================================================== --%>
-        <c:if test="${not empty sessionScope.user}">
-            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
-        </c:if>
-            </div>
-            <div class="right-section">
-                <div class="search-bar">
+
+            <div class="right-section d-flex align-items-center">
+                <div class="search-bar me-2">
                     <input type="text" class="form-control" placeholder="Search courses..." 
                            name="search" value="${searchKeyword}" form="filterForm" 
-                           onkeypress="if (event.key === 'Enter')
-                       filterForm.submit();">
+                           onkeypress="if (event.key === 'Enter') filterForm.submit();">
                 </div>
-                <button class="signup-btn">
-                    <c:if test="${not empty sessionScope.user}">
-                        <a href="logout" class="signup-btn">Log out</a>
-                    </c:if>
-                    <c:if test="${empty sessionScope.user}">
-                        <a href="login" class="signup-btn">Log in</a>
-                    </c:if>
-                </button>
+                
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <a href="logout" class="btn btn-danger">Log Out</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="login" class="btn btn-primary">Log In</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
-        </nav>
+        </div>
+    </div>
+</nav>
         <div class="container mt-4">
             <h1 class="page-title">Course List</h1>
             <div class="row">
@@ -648,5 +679,6 @@
                 });
             });
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
