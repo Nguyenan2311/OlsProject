@@ -312,38 +312,69 @@
                         </div>
                         <button type="submit" class="btn btn-search-main" form="filterForm">Search</button>
                     </div>
+
+                    <!-- START: MODIFIED CATEGORY LINKS -->
                     <div class="sidebar-section">
                         <h5>Categories</h5>
+                        <%-- Link for "All Categories" remains the same --%>
                         <c:url var="allCategoriesUrl" value="courses">
                             <c:param name="search" value="${searchKeyword}"/>
                             <c:param name="tag" value="${selectedTag}"/>
+                            <c:param name="sortBy" value="${sortBy}"/>
                             <c:param name="rowsPerPage" value="${rowsPerPage}"/>
                             <c:param name="showThumbnail" value="${showThumbnail}"/>
                             <c:param name="showTitle" value="${showTitle}"/>
                             <c:param name="showPrice" value="${showPrice}"/>
                             <c:param name="showTagline" value="${showTagline}"/>
-                            <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                            <c:param name="showPublicDate" value="${showPublicDate}"/>
                         </c:url>
                         <a href="${allCategoriesUrl}" class="category-link ${empty selectedCategory ? 'fw-bold' : ''}">All Categories</a>
 
+                        <%-- Loop through each category with new logic --%>
                         <c:forEach var="cat" items="${categories}">
-                            <c:url var="categoryUrl" value="courses">
-                                <c:param name="category" value="${cat}"/>
-                                <c:param name="search" value="${searchKeyword}"/>
-                                <c:param name="tag" value="${selectedTag}"/>
-                                <c:param name="rowsPerPage" value="${rowsPerPage}"/>
-                                <c:param name="showThumbnail" value="${showThumbnail}"/>
-                                <c:param name="showTitle" value="${showTitle}"/>
-                                <c:param name="showPrice" value="${showPrice}"/>
-                                <c:param name="showTagline" value="${showTagline}"/>
-                                <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
-                            </c:url>
-                            <a href="${categoryUrl}" class="category-link ${cat == selectedCategory ? 'fw-bold' : ''}">${cat}</a>
+                            <c:choose>
+                                <%-- Case 1: The category is ALREADY selected. Create a link to DESELECT it. --%>
+                                <c:when test="${cat eq selectedCategory}">
+                                    <c:url var="categoryUrl" value="courses">
+                                        <%-- Create URL without the 'category' param to clear the filter --%>
+                                        <c:param name="search" value="${searchKeyword}"/>
+                                        <c:param name="tag" value="${selectedTag}"/>
+                                        <c:param name="sortBy" value="${sortBy}"/>
+                                        <c:param name="rowsPerPage" value="${rowsPerPage}"/>
+                                        <c:param name="showThumbnail" value="${showThumbnail}"/>
+                                        <c:param name="showTitle" value="${showTitle}"/>
+                                        <c:param name="showPrice" value="${showPrice}"/>
+                                        <c:param name="showTagline" value="${showTagline}"/>
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
+                                    </c:url>
+                                    <%-- The link is bold because it's the active filter --%>
+                                    <a href="${categoryUrl}" class="category-link fw-bold">${cat}</a>
+                                </c:when>
+                                <%-- Case 2: The category is NOT selected. Create a link to SELECT it. --%>
+                                <c:otherwise>
+                                    <c:url var="categoryUrl" value="courses">
+                                        <%-- Create URL with the 'category' param to apply the filter --%>
+                                        <c:param name="category" value="${cat}"/>
+                                        <c:param name="search" value="${searchKeyword}"/>
+                                        <c:param name="tag" value="${selectedTag}"/>
+                                        <c:param name="sortBy" value="${sortBy}"/>
+                                        <c:param name="rowsPerPage" value="${rowsPerPage}"/>
+                                        <c:param name="showThumbnail" value="${showThumbnail}"/>
+                                        <c:param name="showTitle" value="${showTitle}"/>
+                                        <c:param name="showPrice" value="${showPrice}"/>
+                                        <c:param name="showTagline" value="${showTagline}"/>
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
+                                    </c:url>
+                                    <%-- The link is not bold --%>
+                                    <a href="${categoryUrl}" class="category-link">${cat}</a>
+                                </c:otherwise>
+                            </c:choose>
                         </c:forEach>
                     </div>
-
+                                       <!-- START: MODIFIED FEATURED LINKS -->
                     <div class="sidebar-section">
                         <h5>Featured</h5>
+                        <%-- Phần sắp xếp theo ngày giữ nguyên --%>
                         <div class="mb-2">
                             <a href="#" id="dateSortLink" class="category-link" onclick="toggleDateOptions(event)">Sort by Date</a>
                             <div id="dateOptions" class="date-options" style="display: none;">
@@ -357,7 +388,7 @@
                                     <c:param name="showTitle" value="${showTitle}"/>
                                     <c:param name="showPrice" value="${showPrice}"/>
                                     <c:param name="showTagline" value="${showTagline}"/>
-                                    <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                    <c:param name="showPublicDate" value="${showPublicDate}"/>
                                 </c:url>
                                 <a href="${newestUrl}" class="date-option ${sortBy == 'newest' ? 'fw-bold' : ''}" onclick="hideDateOptions()">Newest</a>
 
@@ -371,31 +402,37 @@
                                     <c:param name="showTitle" value="${showTitle}"/>
                                     <c:param name="showPrice" value="${showPrice}"/>
                                     <c:param name="showTagline" value="${showTagline}"/>
-                                    <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                    <c:param name="showPublicDate" value="${showPublicDate}"/>
                                 </c:url>
                                 <a href="${oldestUrl}" class="date-option ${sortBy == 'oldest' ? 'fw-bold' : ''}" onclick="hideDateOptions()">Oldest</a>
                             </div>
                         </div>
 
+                        <%-- Vòng lặp qua các thẻ với logic toggle mới --%>
                         <c:forEach var="tagline" items="${taglines}">
                             <c:choose>
+                                <%-- Trường hợp 1: Thẻ này ĐÃ được chọn. Tạo liên kết để BỎ CHỌN nó. --%>
                                 <c:when test="${selectedTag == tagline.id}">
                                     <c:url var="tagUrl" value="courses">
+                                        <%-- URL không có tham số 'tag' để xóa bộ lọc này --%>
                                         <c:param name="search" value="${searchKeyword}"/>
                                         <c:param name="category" value="${selectedCategory}"/>
                                         <c:param name="sortBy" value="${sortBy}"/>
-                                        <c:param name="tag" value="${tagline.id}"/>
                                         <c:param name="rowsPerPage" value="${rowsPerPage}"/>
                                         <c:param name="showThumbnail" value="${showThumbnail}"/>
                                         <c:param name="showTitle" value="${showTitle}"/>
                                         <c:param name="showPrice" value="${showPrice}"/>
                                         <c:param name="showTagline" value="${showTagline}"/>
-                                        <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
                                     </c:url>
-                                    <a href="${tagUrl}" class="featured-link fw-bold" onclick="this.blur();">${tagline.name}</a>
+                                    <%-- Liên kết được in đậm vì nó là bộ lọc đang hoạt động --%>
+                                    <a href="${tagUrl}" class="featured-link fw-bold">${tagline.name}</a>
                                 </c:when>
+                                
+                                <%-- Trường hợp 2: Thẻ này CHƯA được chọn. Tạo liên kết để CHỌN nó. --%>
                                 <c:otherwise>
                                     <c:url var="tagUrl" value="courses">
+                                        <%-- URL với tham số 'tag' để áp dụng bộ lọc --%>
                                         <c:param name="tag" value="${tagline.id}"/>
                                         <c:param name="search" value="${searchKeyword}"/>
                                         <c:param name="category" value="${selectedCategory}"/>
@@ -405,13 +442,15 @@
                                         <c:param name="showTitle" value="${showTitle}"/>
                                         <c:param name="showPrice" value="${showPrice}"/>
                                         <c:param name="showTagline" value="${showTagline}"/>
-                                        <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
                                     </c:url>
-                                    <a href="${tagUrl}" class="featured-link ${selectedTag == tagline.id ? 'fw-bold' : ''}" onclick="this.blur();">${tagline.name}</a>
+                                    <%-- Liên kết không được in đậm --%>
+                                    <a href="${tagUrl}" class="featured-link">${tagline.name}</a>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
                     </div>
+                    <!-- END: MODIFIED FEATURED LINKS -->
                     <div class="sidebar-section contact-info">
                         <h5>Contact</h5>
                         <p>Email: abc@gmail.com</p>

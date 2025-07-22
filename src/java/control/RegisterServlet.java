@@ -101,10 +101,10 @@ public class RegisterServlet extends HttpServlet {
 
             // Tạo mật khẩu tạm thời và hash nó
             String temporaryPassword = UUID.randomUUID().toString();
-            String hashedPassword = PasswordHasher.hash(temporaryPassword);
+            
 
             // Tạo người dùng mới trong CSDL
-            User newUser = userDAO.createNewUser(firstName, lastName, email, phone, gender, hashedPassword);
+            User newUser = userDAO.createNewUser(firstName, lastName, email, phone, gender, temporaryPassword);
             if (newUser == null) {
                 throw new Exception("Failed to create the user account in the database.");
             }
