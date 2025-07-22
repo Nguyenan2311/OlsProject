@@ -38,49 +38,19 @@ public class CourseRegistrationServlet extends HttpServlet {
 
         String search = request.getParameter("search");
         String category = request.getParameter("category");
-        String pageStr = request.getParameter("page");
-       
-        int page = 1;
-        int pageSize = 10;
 
         try {
-            if (pageStr != null) {
-                page = Integer.parseInt(pageStr);
-            }
-        } catch (NumberFormatException e) {
-            page = 1;
-        }
-
-        try {
-            // Get filtered registrations
-            List<CourseRegistration> allRegistrations = registrationService.getAllRegistrations(search, category, user.getId());
-
-            // Calculate pagination
-            int totalRegistrations = allRegistrations.size();
-            int totalPages = (int) Math.ceil((double) totalRegistrations / pageSize);
-
-            // Ensure page is within valid range
-            page = Math.max(1, Math.min(page, totalPages));
-
-            // Get registrations for current page
-            int start = (page - 1) * pageSize;
-            int end = Math.min(start + pageSize, totalRegistrations);
-            List<CourseRegistration> pagedRegistrations = allRegistrations.subList(
-                    Math.min(start, totalRegistrations),
-                    Math.min(end, totalRegistrations)
-            );
+            // Get all filtered registrations (no pagination)
+            List<CourseRegistration> registrations = registrationService.getAllRegistrations(search, category, user.getId());
 
             // Calculate stats
             long activeCount = registrationService.getActiveCount(user.getId());
             long submittedCount = registrationService.getSubmittedCount(user.getId());
 
             // Set request attributes
-            request.setAttribute("registrationList", pagedRegistrations);
+            request.setAttribute("registrationList", registrations);
             request.setAttribute("activeCount", activeCount);
             request.setAttribute("submittedCount", submittedCount);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("page", page);
-            request.setAttribute("pageSize", pageSize);
 
             // Forward to JSP
             request.getRequestDispatcher("/my_registrations.jsp").forward(request, response);
@@ -95,8 +65,8 @@ public class CourseRegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Integer customerId = (Integer) session.getAttribute("customerId");
-        if (customerId == null) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -106,7 +76,7 @@ public class CourseRegistrationServlet extends HttpServlet {
             String id = request.getParameter("id");
             if (id != null) {
                 try {
-                    registrationService.cancelRegistration(Integer.parseInt(id), customerId);
+                    registrationService.cancelRegistration(Integer.parseInt(id), user);
                     request.setAttribute("message", "Registration cancelled successfully");
                     request.setAttribute("messageType", "success");
                 } catch (NumberFormatException e) {

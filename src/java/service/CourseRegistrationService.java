@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import model.CourseRegistration;
+import model.User;
 
 public class CourseRegistrationService {
     private CourseRegistrationDAO dao;
@@ -33,8 +34,8 @@ public class CourseRegistrationService {
         return registrations;
     }
 
-    public void cancelRegistration(int id, int customerId) throws SQLException, Exception {
-        dao.cancelRegistration(id, customerId);
+    public void cancelRegistration(int id, User user) throws SQLException, Exception {
+        dao.cancelRegistration(id, user);
     }
 
     public long getActiveCount(int customerId) throws SQLException, Exception {

@@ -283,45 +283,6 @@
             color: white;
         }
 
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        .pagination {
-            gap: 8px;
-        }
-
-        .page-link {
-            border: 0;
-            padding: 10px 16px;
-            border-radius: 10px;
-            background: white;
-            color: var(--dark-color);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .page-link:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .page-item.active .page-link {
-            background: var(--primary-color);
-            color: white;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .page-item.disabled .page-link {
-            background-color: var(--secondary-color);
-            color: #94a3b8;
-        }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -374,7 +335,7 @@
             <div class="col-lg-3">
                 <div class="sidebar-section">
                     <h5>Search course</h5>
-                    <form method="get" action="user_registrations">
+                    <form method="get" action="my-registrations">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Search..." value="${param.search}">
                             <input type="hidden" name="category" value="${param.category}">
@@ -394,9 +355,9 @@
                 
                 <div class="sidebar-section">
                     <h5>Featured</h5>
-                   <a href="courses?search=&category=&sortBy=title&tag=1&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Master English Basics</a>
-                  <a href="courses?tag=2&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Start Your Japanese Journey</a>
-                   <a href="courses?tag=3&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off">Prepare for TOPIK I</a>
+                   <a href="courses?search=&category=&sortBy=title&tag=1&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off" class="category-link">Master English Basics</a>
+                  <a href="courses?tag=2&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off"class="category-link">Start Your Japanese Journey</a>
+                   <a href="courses?tag=3&search=&category=&sortBy=title&rowsPerPage=2&showThumbnail=on&showTitle=off&showPrice=off&showTagline=off&showPublicDate=off"class="category-link">Prepare for TOPIK I</a>
                 </div>
                 
                 <div class="sidebar-section">
@@ -485,7 +446,7 @@
                                                                 <a href="course-detail?id=${reg.courseId}&action=summit" class="btn-action btn-edit me-2">
                                                                     <i class="fas fa-edit"></i> Edit
                                                                 </a>
-                                                                <form method="post" action="user_registrations" class="d-inline">
+                                                                <form method="post" action="my-registrations" class="d-inline">
                                                                     <input type="hidden" name="action" value="cancel">
                                                                     <input type="hidden" name="id" value="${reg.id}">
                                                                     <button type="submit" class="btn-action btn-cancel" onclick="return confirm('Are you sure you want to cancel this registration?');">
@@ -499,38 +460,13 @@
                                                         </c:choose>
                                                     </td>
                                                 </tr>
-                                            </c:forEach>
+                                                </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
                             </c:otherwise>
                         </c:choose>
                     </div>
-
-                    <!-- Pagination -->
-                    <c:if test="${totalPages > 1}">
-                        <div class="pagination-container">
-                             <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                     <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="user_registrations?page=${page - 1}&search=${param.search}&category=${param.category}" aria-label="Previous">
-                                            <span aria-hidden="true">«</span>
-                                        </a>
-                                    </li>
-                                    <c:forEach begin="1" end="${totalPages}" var="i">
-                                        <li class="page-item ${page == i ? 'active' : ''}">
-                                            <a class="page-link" href="user_registrations?page=${i}&search=${param.search}&category=${param.category}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                    <li class="page-item ${page == totalPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="user_registrations?page=${page + 1}&search=${param.search}&category=${param.category}" aria-label="Next">
-                                            <span aria-hidden="true">»</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </c:if>
                 </div>
             </div>
         </div>

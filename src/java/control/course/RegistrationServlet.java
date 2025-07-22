@@ -53,19 +53,21 @@ public class RegistrationServlet extends HttpServlet {
                 //       TRƯỜNG HỢP 1: NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP
                 // ==========================================================
                 
-                // Không cần validate, chỉ cần ghi danh khóa học
                 User getUser = userDAO.findByEmail(user.getEmail());
-                 
-            if (registrationDAO.isUserAlreadyEnrolled(user.getId(), courseId)) {
-                session.setAttribute("registrationStatus", "error");
-                session.setAttribute("registrationMessage", "You have already registered for this course. You can find it in 'My Courses'.");
-                response.sendRedirect(redirectURL);
-                return; // Dừng lại
-            }   
+                
+                // Check if user is already enrolled and inform them about re-enrollment
+                boolean isAlreadyEnrolled = registrationDAO.isUserAlreadyEnrolled(user.getId(), courseId);
+                
+                // Enroll the course (this will delete old enrollment and create new one if exists)
                 registrationDAO.enrollCourse(getUser.getId(), courseId, pricePackageId);
                 
-                session.setAttribute("registrationStatus", "success");
-                session.setAttribute("registrationMessage", "Congratulations! You have successfully registered for the course.");
+                if (isAlreadyEnrolled) {
+                    session.setAttribute("registrationStatus", "success");
+                    session.setAttribute("registrationMessage", "You have successfully re-registered for the course with a new package. Your previous enrollment has been updated.");
+                } else {
+                    session.setAttribute("registrationStatus", "success");
+                    session.setAttribute("registrationMessage", "Congratulations! You have successfully registered for the course.");
+                }
                 response.sendRedirect(redirectURL);
 
             } else {
@@ -83,8 +85,18 @@ public class RegistrationServlet extends HttpServlet {
                 // --- Bắt đầu Validation ---
                 if (!isEmailValid(email)) {
                     errors.put("email", "Please enter a valid form email address ex: abc@gmail.com");
-                } else if (userDAO.isEmailExists(email)) {
-                    errors.put("email", "This email is already registered. Please <a href='login.jsp' class='alert-link'>login</a>.");
+                } else {
+                    // Check if email exists and if the user is already enrolled
+                    User existingUser = userDAO.findByEmail(email);
+                    if (existingUser != null) {
+                        // Email exists, check if already enrolled in this course
+                        boolean isAlreadyEnrolled = registrationDAO.isUserAlreadyEnrolled(existingUser.getId(), courseId);
+                        if (isAlreadyEnrolled) {
+                            errors.put("email", "This email is already registered for this course. Please <a href='login.jsp' class='alert-link'>login</a> to re-register with a new package.");
+                        } else {
+                            errors.put("email", "This email is already registered. Please <a href='login.jsp' class='alert-link'>login</a>.");
+                        }
+                    }
                 }
                 if (fullName == null || fullName.trim().isEmpty()) {
                     errors.put("fullName", "Full Name is required.");
@@ -117,7 +129,6 @@ public class RegistrationServlet extends HttpServlet {
                 String randomPassword = UUID.randomUUID().toString().substring(0, 8);
                 String hashedPassword = PasswordHasher.hash(randomPassword);
                 PasswordResetService resetService = new PasswordResetService();
-            
 
                 User newUser = userDAO.createNewUser(firstName, lastName, email, mobile, gender, hashedPassword);
                 if (newUser == null) {
@@ -148,16 +159,7 @@ public class RegistrationServlet extends HttpServlet {
             return false;
         }
         String emailRegex = "^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\\.[a-zA-Z]{2,}$";
-        
-        
-        
-        
-        
-        
-        
-        
         Pattern pat = Pattern.compile(emailRegex);
         return pat.matcher(email).matches();
     }
-    
 }

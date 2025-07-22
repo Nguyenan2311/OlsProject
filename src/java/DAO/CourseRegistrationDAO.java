@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import model.CourseRegistration;
+import model.User;
 
 public class CourseRegistrationDAO extends DBContext {
     public List<CourseRegistration> getAllRegistrations(String search, String category, int customerId) throws SQLException, Exception {
@@ -76,22 +77,59 @@ public class CourseRegistrationDAO extends DBContext {
     }
 
 
-    public void cancelRegistration(int id, int customerId) throws SQLException, Exception {
-        String sql = "UPDATE PersonalCourse SET progress = -1 WHERE id = ? AND customer_id = ?";
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, id);
-            stmt.setInt(2, customerId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new SQLException("Error cancelling registration: " + e.getMessage(), e);
-        } finally {
-            closeResources(conn, stmt, null);
+    public void cancelRegistration(int id, User user) throws SQLException, Exception {
+    // Kiểm tra xem registration có tồn tại và thuộc về user không
+    String checkSql = "SELECT id FROM PersonalCourse WHERE id = ? AND customer_id = ?";
+    String deleteSql = "DELETE FROM PersonalCourse WHERE id = ? AND customer_id = ?";
+    
+    Connection conn = null;
+    PreparedStatement checkStmt = null;
+    PreparedStatement deleteStmt = null;
+    ResultSet rs = null;
+    
+    try {
+        conn = getConnection();
+        
+        // Kiểm tra trước khi xóa
+        checkStmt = conn.prepareStatement(checkSql);
+        checkStmt.setInt(1, id);
+        checkStmt.setInt(2, user.getId());
+        rs = checkStmt.executeQuery();
+        
+        if (!rs.next()) {
+            throw new Exception("Registration not found or user not authorized");
+        }
+        
+        // Thực hiện xóa
+        deleteStmt = conn.prepareStatement(deleteSql);
+        deleteStmt.setInt(1, id);
+        deleteStmt.setInt(2, user.getId());
+        
+        int rowsAffected = deleteStmt.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new Exception("Unable to delete registration");
+        }
+        
+        System.out.println("Successfully deleted registration with ID: " + id + " for user: " + user.getId());
+        
+    } catch (SQLException e) {
+        throw new SQLException("Error deleting registration: " + e.getMessage(), e);
+    } finally {
+        // Đóng resources theo thứ tự đúng
+        if (rs != null) {
+            try { rs.close(); } catch (SQLException e) { System.err.println("Error closing ResultSet: " + e.getMessage()); }
+        }
+        if (checkStmt != null) {
+            try { checkStmt.close(); } catch (SQLException e) { System.err.println("Error closing checkStmt: " + e.getMessage()); }
+        }
+        if (deleteStmt != null) {
+            try { deleteStmt.close(); } catch (SQLException e) { System.err.println("Error closing deleteStmt: " + e.getMessage()); }
+        }
+        if (conn != null) {
+            try { conn.close(); } catch (SQLException e) { System.err.println("Error closing Connection: " + e.getMessage()); }
         }
     }
+}
 
     public long getActiveCount(int customerId) throws SQLException, Exception {
         String sql = "SELECT COUNT(*) FROM PersonalCourse pc " +
