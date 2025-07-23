@@ -47,7 +47,7 @@ public class AddUserServlet extends HttpServlet {
         if (success) {
             // Send email
             String msg = "Your account has been created. Your login password is: " + password;
-            EmailUtil.sendMail(email, "Account Created", msg);
+            EmailUtil.sendRandomPasswordEmail(email, msg);
             request.setAttribute("message", "User added and password sent to email.");
         } else {
             request.setAttribute("error", "Failed to add user. Email may already exist.");

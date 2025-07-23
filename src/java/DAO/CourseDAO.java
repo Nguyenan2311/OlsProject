@@ -149,7 +149,7 @@ extends DBContext {
         return taglines;
     }
 
-     */
+     
     public List<String> getCategories() throws Exception {
         ArrayList<String> categories = new ArrayList<String>();
         String sql = "SELECT DISTINCT s.value FROM Setting s INNER JOIN SettingType st ON s.setting_type_id = st.id WHERE st.name = 'Course Categories' AND s.status = 1 ORDER BY s.value";
@@ -220,7 +220,32 @@ extends DBContext {
         courseDetail.setVideos(allVisuals.stream().filter(v -> v.getType() == 2).collect(Collectors.toList()));
         return courseDetail;
     }
-
+ public List<PricePackage> getAllPricePackagesForCourse(int courseId) throws Exception {
+        ArrayList<PricePackage> packages = new ArrayList<PricePackage>();
+        String sql = "SELECT * FROM PricePackage WHERE course_id = ? AND (end_date IS NULL OR end_date >= GETDATE()) ORDER BY price ASC";
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);){
+            stmt.setInt(1, courseId);
+            try (ResultSet rs = stmt.executeQuery();){
+                while (rs.next()) {
+                    PricePackage pp = new PricePackage();
+                    pp.setId(rs.getInt("id"));
+                    pp.setCourseId(rs.getInt("course_id"));
+                    pp.setTitle(rs.getString("title"));
+                    pp.setPrice(rs.getDouble("price"));
+                    pp.setSalePrice(rs.getDouble("sale_price"));
+                    pp.setStartDate((Date)rs.getDate("start_date"));
+                    pp.setEndDate((Date)rs.getDate("end_date"));
+                    packages.add(pp);
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.err.println("Error fetching all price packages for course ID " + courseId + ": " + e.getMessage());
+            throw new Exception("Could not retrieve price packages.", e);
+        }
+        return packages;
+    }
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
