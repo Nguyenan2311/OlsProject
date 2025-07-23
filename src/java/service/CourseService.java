@@ -33,6 +33,10 @@ public class CourseService {
     public List<String> getCategories() throws Exception {
         return courseDAO.getCategories();
     }
+    
+    public String getCategoryNameById(int categoryId) throws Exception {
+        return courseDAO.getCategoryNameById(categoryId);
+    }
 
     public Course getCourseDetail(int courseId) throws Exception {
         if (courseId < 1) {
@@ -82,5 +86,55 @@ public class CourseService {
     // Add method to get all taglines
     public List<model.Tagline> getAllTaglines() throws Exception {
         return courseDAO.getAllTaglines();
+    }
+    
+    // Course Management Methods
+    public List<CourseDAO.CourseManagementItem> getCoursesForManagement(String search, String category, String status, int rowsPerPage, int currentPage) 
+            throws Exception {
+        int offset = (currentPage - 1) * rowsPerPage;
+        if (offset < 0) offset = 0;
+        
+        List<CourseDAO.CourseManagementItem> courses = courseDAO.getCoursesForManagement(search, category, status, rowsPerPage, offset);
+        LOGGER.info("Retrieved " + courses.size() + " courses for management");
+        return courses;
+    }
+    
+    public int getTotalCoursesForManagement(String search, String category, String status) throws Exception {
+        return courseDAO.getTotalCoursesForManagement(search, category, status);
+    }
+    
+    /**
+     * Update course status
+     */
+    public boolean updateCourseStatus(int courseId, int status) throws Exception {
+        return courseDAO.updateCourseStatus(courseId, status);
+    }
+    
+    /**
+     * Get course by ID for editing
+     */
+    public Course getCourseByIdForEdit(int courseId) throws Exception {
+        return courseDAO.getCourseByIdForEdit(courseId);
+    }
+    
+    /**
+     * Insert new course
+     */
+    public boolean insertCourse(Course course) throws Exception {
+        return courseDAO.insertCourse(course);
+    }
+    
+    /**
+     * Update existing course
+     */
+    public boolean updateCourse(Course course) throws Exception {
+        return courseDAO.updateCourse(course);
+    }
+    
+    /**
+     * Get category ID by name
+     */
+    public int getCategoryIdByName(String categoryName) throws Exception {
+        return courseDAO.getCategoryIdByName(categoryName);
     }
 }

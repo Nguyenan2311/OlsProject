@@ -24,6 +24,7 @@ public class User {
     private String image;
     private String address;
     private int status;
+    private String roleName; // display role name for admin user list
 
     public User() {
     }
@@ -152,8 +153,12 @@ public class User {
     public String toString() {
         return "User{" + "id=" + id + ", email=" + email + ", password=" + password + ", role_id=" + role_id + ", dob=" + dob + ", created_date=" + created_date + ", first_name=" + first_name + ", last_name=" + last_name + ", gender=" + gender + ", phone=" + phone + ", image=" + image + ", address=" + address + ", status=" + status + '}';
     }
-    
-    
-    
-    
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 }
+
