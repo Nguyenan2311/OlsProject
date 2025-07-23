@@ -3,6 +3,7 @@ package service;
 import DAO.CourseDAO;
 import java.util.List;
 import java.util.logging.Logger;
+import model.Course;
 import model.CourseDetail;
 import model.Tagline;
 

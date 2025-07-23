@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import service.PasswordResetService;
 
-@WebServlet("/register-course")
+@WebServlet("/registersscourse")
 public class RegistrationServlet extends HttpServlet {
 
     @Override

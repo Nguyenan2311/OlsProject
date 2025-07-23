@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import model.CourseDetail;
 import service.CourseService;
 
-@WebServlet(value={"/course-detail"})
+@WebServlet(value={"/coursessdetail"})
 public class CourseDetailServlet
 extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(CourseDetailServlet.class.getName());

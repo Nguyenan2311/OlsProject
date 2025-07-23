@@ -3,6 +3,7 @@ package model;
 import java.util.Date;
 
 public class User {
+
     private int id;
     private String email;
     private String password;
@@ -152,9 +153,6 @@ public class User {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
-}
-
-
 
     public String getFullName() {
         String ln = this.last_name != null ? this.last_name : "";
@@ -162,4 +160,3 @@ public class User {
         return (ln + " " + fn).trim();
     }
 }
-

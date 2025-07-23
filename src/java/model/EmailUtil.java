@@ -19,10 +19,8 @@ public class EmailUtil {
     private static final int SMTP_PORT = 587;
     private static final String EMAIL = "tuananh2004ab@gmail.com";
 
-   
     private static final String PASSWORD = "wowl axzr waik jmsx";
     private static final int SMTP_TIMEOUT = 5000;
-
 
     public static boolean sendPasswordResetEmail(String toEmail, String resetLink) {
         if (!EmailUtil.isValidEmail(toEmail)) {
@@ -101,7 +99,7 @@ public class EmailUtil {
     private static String buildSetPasswordContent(String newPass) {
         return "<!DOCTYPE html><html style='font-family: Arial, sans-serif;'><head><meta charset='UTF-8'></head><body style='margin: 0; padding: 20px; color: #333;'><div style='max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 5px; padding: 20px;'>"
                 + "<h2 style='color: #2c3e50;'>Your Password</h2>"
-                +" <h2 style='color: #2c3e50;'>" + newPass+ "</h2>"
+                + " <h2 style='color: #2c3e50;'>" + newPass + "</h2>"
                 + "<p>This link will expire in 24 hours. If you didn't request this, please ignore this email.</p><hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'><p style='font-size: 12px; color: #777;'>EDEMY Learning Platform</p></div></body></html>";
     }
 
