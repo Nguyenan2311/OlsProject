@@ -144,12 +144,12 @@
             }
             .category-link:hover, .featured-link:hover {
                 color: #0b5ed7;
-        text-decoration: underline;
+                text-decoration: underline;
             }
             .featured-link.fw-bold {
-        font-weight: 600;
-    }
-    
+                font-weight: 600;
+            }
+
             .contact-info p {
                 margin-bottom: 0.25rem;
             }
@@ -265,25 +265,70 @@
         </style>
     </head>
     <body>
-        <nav class="navbar">
-            <div class="logo">
-                <img src="img/logo.png" alt="alt"/>
+       <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
+            <img src="img/logo.png" alt="EDEMY Logo" style="height: 45px; max-width: 200px; object-fit: contain;">
+        </a>
+
+        <div class="collapse navbar-collapse">
+            <div class="nav-links navbar-nav me-auto mb-2 mb-lg-0">
+                <a href="${pageContext.request.contextPath}/home" class="nav-link">Home</a>
+                <a href="${pageContext.request.contextPath}/courses" class="nav-link">Courses</a>
+                <a href="#" class="nav-link">Blog</a>
+                <a href="#" class="nav-link">About</a>
+
+                <%-- KHI USER ĐÃ ĐĂNG NHẬP, HIỂN THỊ MENU DROPDOWN --%>
+                <c:if test="${not empty sessionScope.user}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            My Learning
+                        </a>
+                        <ul class="dropdown-menu">
+                            <%-- 1. Cầu nối vào khóa học --%>
+                            <li>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-course">
+                                    <i class="bi bi-collection-play-fill me-2"></i>My Courses
+                                </a>
+                            </li>
+                          
+                             <%-- 3. Lịch sử đăng ký chi tiết --%>
+                            <li>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-registrations">
+                                    <i class="bi bi-receipt-cutoff me-2"></i>Registration History
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                             <%-- 4. Các liên kết khác như Profile... --%>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person-circle me-2"></i>My Profile
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
             </div>
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
-                <a href="#">Blog</a>
-                <a href="#">About</a>
-            </div>
-            <div class="right-section">
-                <div class="search-bar">
+
+            <div class="right-section d-flex align-items-center">
+                <div class="search-bar me-2">
                     <input type="text" class="form-control" placeholder="Search courses..." 
-           name="search" value="${searchKeyword}" form="filterForm" 
-           onkeypress="if(event.key === 'Enter') filterForm.submit();">
+                           name="search" value="${searchKeyword}" form="filterForm" 
+                           onkeypress="if (event.key === 'Enter') filterForm.submit();">
                 </div>
-                <button class="signup-btn">Sign Up</button>
+                
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <a href="logout" class="btn btn-danger">Log Out</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="login" class="btn btn-primary">Log In</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
-        </nav>
+        </div>
+    </div>
+</nav>
         <div class="container mt-4">
             <h1 class="page-title">Course List</h1>
             <div class="row">
@@ -298,38 +343,69 @@
                         </div>
                         <button type="submit" class="btn btn-search-main" form="filterForm">Search</button>
                     </div>
+
+                    <!-- START: MODIFIED CATEGORY LINKS -->
                     <div class="sidebar-section">
                         <h5>Categories</h5>
+                        <%-- Link for "All Categories" remains the same --%>
                         <c:url var="allCategoriesUrl" value="courses">
                             <c:param name="search" value="${searchKeyword}"/>
                             <c:param name="tag" value="${selectedTag}"/>
+                            <c:param name="sortBy" value="${sortBy}"/>
                             <c:param name="rowsPerPage" value="${rowsPerPage}"/>
                             <c:param name="showThumbnail" value="${showThumbnail}"/>
                             <c:param name="showTitle" value="${showTitle}"/>
                             <c:param name="showPrice" value="${showPrice}"/>
                             <c:param name="showTagline" value="${showTagline}"/>
-                            <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                            <c:param name="showPublicDate" value="${showPublicDate}"/>
                         </c:url>
                         <a href="${allCategoriesUrl}" class="category-link ${empty selectedCategory ? 'fw-bold' : ''}">All Categories</a>
 
+                        <%-- Loop through each category with new logic --%>
                         <c:forEach var="cat" items="${categories}">
-                            <c:url var="categoryUrl" value="courses">
-                                <c:param name="category" value="${cat}"/>
-                                <c:param name="search" value="${searchKeyword}"/>
-                                <c:param name="tag" value="${selectedTag}"/>
-                                <c:param name="rowsPerPage" value="${rowsPerPage}"/>
-                                <c:param name="showThumbnail" value="${showThumbnail}"/>
-                                <c:param name="showTitle" value="${showTitle}"/>
-                                <c:param name="showPrice" value="${showPrice}"/>
-                                <c:param name="showTagline" value="${showTagline}"/>
-                                <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
-                            </c:url>
-                            <a href="${categoryUrl}" class="category-link ${cat == selectedCategory ? 'fw-bold' : ''}">${cat}</a>
+                            <c:choose>
+                                <%-- Case 1: The category is ALREADY selected. Create a link to DESELECT it. --%>
+                                <c:when test="${cat eq selectedCategory}">
+                                    <c:url var="categoryUrl" value="courses">
+                                        <%-- Create URL without the 'category' param to clear the filter --%>
+                                        <c:param name="search" value="${searchKeyword}"/>
+                                        <c:param name="tag" value="${selectedTag}"/>
+                                        <c:param name="sortBy" value="${sortBy}"/>
+                                        <c:param name="rowsPerPage" value="${rowsPerPage}"/>
+                                        <c:param name="showThumbnail" value="${showThumbnail}"/>
+                                        <c:param name="showTitle" value="${showTitle}"/>
+                                        <c:param name="showPrice" value="${showPrice}"/>
+                                        <c:param name="showTagline" value="${showTagline}"/>
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
+                                    </c:url>
+                                    <%-- The link is bold because it's the active filter --%>
+                                    <a href="${categoryUrl}" class="category-link fw-bold">${cat}</a>
+                                </c:when>
+                                <%-- Case 2: The category is NOT selected. Create a link to SELECT it. --%>
+                                <c:otherwise>
+                                    <c:url var="categoryUrl" value="courses">
+                                        <%-- Create URL with the 'category' param to apply the filter --%>
+                                        <c:param name="category" value="${cat}"/>
+                                        <c:param name="search" value="${searchKeyword}"/>
+                                        <c:param name="tag" value="${selectedTag}"/>
+                                        <c:param name="sortBy" value="${sortBy}"/>
+                                        <c:param name="rowsPerPage" value="${rowsPerPage}"/>
+                                        <c:param name="showThumbnail" value="${showThumbnail}"/>
+                                        <c:param name="showTitle" value="${showTitle}"/>
+                                        <c:param name="showPrice" value="${showPrice}"/>
+                                        <c:param name="showTagline" value="${showTagline}"/>
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
+                                    </c:url>
+                                    <%-- The link is not bold --%>
+                                    <a href="${categoryUrl}" class="category-link">${cat}</a>
+                                </c:otherwise>
+                            </c:choose>
                         </c:forEach>
                     </div>
-
+                                       <!-- START: MODIFIED FEATURED LINKS -->
                     <div class="sidebar-section">
                         <h5>Featured</h5>
+                        <%-- Phần sắp xếp theo ngày giữ nguyên --%>
                         <div class="mb-2">
                             <a href="#" id="dateSortLink" class="category-link" onclick="toggleDateOptions(event)">Sort by Date</a>
                             <div id="dateOptions" class="date-options" style="display: none;">
@@ -343,7 +419,7 @@
                                     <c:param name="showTitle" value="${showTitle}"/>
                                     <c:param name="showPrice" value="${showPrice}"/>
                                     <c:param name="showTagline" value="${showTagline}"/>
-                                    <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                    <c:param name="showPublicDate" value="${showPublicDate}"/>
                                 </c:url>
                                 <a href="${newestUrl}" class="date-option ${sortBy == 'newest' ? 'fw-bold' : ''}" onclick="hideDateOptions()">Newest</a>
 
@@ -357,31 +433,37 @@
                                     <c:param name="showTitle" value="${showTitle}"/>
                                     <c:param name="showPrice" value="${showPrice}"/>
                                     <c:param name="showTagline" value="${showTagline}"/>
-                                    <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                    <c:param name="showPublicDate" value="${showPublicDate}"/>
                                 </c:url>
                                 <a href="${oldestUrl}" class="date-option ${sortBy == 'oldest' ? 'fw-bold' : ''}" onclick="hideDateOptions()">Oldest</a>
                             </div>
                         </div>
 
+                        <%-- Vòng lặp qua các thẻ với logic toggle mới --%>
                         <c:forEach var="tagline" items="${taglines}">
                             <c:choose>
+                                <%-- Trường hợp 1: Thẻ này ĐÃ được chọn. Tạo liên kết để BỎ CHỌN nó. --%>
                                 <c:when test="${selectedTag == tagline.id}">
                                     <c:url var="tagUrl" value="courses">
+                                        <%-- URL không có tham số 'tag' để xóa bộ lọc này --%>
                                         <c:param name="search" value="${searchKeyword}"/>
                                         <c:param name="category" value="${selectedCategory}"/>
                                         <c:param name="sortBy" value="${sortBy}"/>
-                                        <c:param name="tag" value="${tagline.id}"/>
                                         <c:param name="rowsPerPage" value="${rowsPerPage}"/>
                                         <c:param name="showThumbnail" value="${showThumbnail}"/>
                                         <c:param name="showTitle" value="${showTitle}"/>
                                         <c:param name="showPrice" value="${showPrice}"/>
                                         <c:param name="showTagline" value="${showTagline}"/>
-                                        <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
                                     </c:url>
-                                    <a href="${tagUrl}" class="featured-link fw-bold" onclick="this.blur();">${tagline.name}</a>
+                                    <%-- Liên kết được in đậm vì nó là bộ lọc đang hoạt động --%>
+                                    <a href="${tagUrl}" class="featured-link fw-bold">${tagline.name}</a>
                                 </c:when>
+                                
+                                <%-- Trường hợp 2: Thẻ này CHƯA được chọn. Tạo liên kết để CHỌN nó. --%>
                                 <c:otherwise>
                                     <c:url var="tagUrl" value="courses">
+                                        <%-- URL với tham số 'tag' để áp dụng bộ lọc --%>
                                         <c:param name="tag" value="${tagline.id}"/>
                                         <c:param name="search" value="${searchKeyword}"/>
                                         <c:param name="category" value="${selectedCategory}"/>
@@ -391,13 +473,15 @@
                                         <c:param name="showTitle" value="${showTitle}"/>
                                         <c:param name="showPrice" value="${showPrice}"/>
                                         <c:param name="showTagline" value="${showTagline}"/>
-                                        <c:param name="showPublicDate" value="${showPublicDate}"/> <!-- Thêm mới -->
+                                        <c:param name="showPublicDate" value="${showPublicDate}"/>
                                     </c:url>
-                                    <a href="${tagUrl}" class="featured-link ${selectedTag == tagline.id ? 'fw-bold' : ''}" onclick="this.blur();">${tagline.name}</a>
+                                    <%-- Liên kết không được in đậm --%>
+                                    <a href="${tagUrl}" class="featured-link">${tagline.name}</a>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
                     </div>
+                    <!-- END: MODIFIED FEATURED LINKS -->
                     <div class="sidebar-section contact-info">
                         <h5>Contact</h5>
                         <p>Email: abc@gmail.com</p>
@@ -453,7 +537,9 @@
                                             </c:if>
                                             <div class="card-body d-flex flex-column">
                                                 <c:if test="${showTitle == 'on'}">
-                                                    <h5 class="card-title">${course.title}</h5>
+                                                    <a href="course-detail?id=${course.id}" class="text-decoration-none">
+                                                        <h5 class="card-title">${course.title}</h5>
+                                                    </a>
                                                 </c:if>
                                                 <c:if test="${showTagline == 'on'}">
                                                     <p class="card-text">${course.tagline}</p>
@@ -474,7 +560,7 @@
                                                     </div>
                                                 </c:if>
                                                 <div class="mt-auto">
-                                                    <a href="#" class="btn btn-register">Register</a>
+                                                    <a href="course-detail?id=${course.id}" class="btn btn-register">Register Now</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -593,5 +679,6 @@
                 });
             });
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

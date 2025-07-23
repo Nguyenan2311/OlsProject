@@ -70,6 +70,10 @@ public class LoginServlet extends HttpServlet {
         if (user == null) {
             request.setAttribute("errorMessage", "Invalid user name or password! Please try again");
             request.getRequestDispatcher("Login.jsp").forward(request, response);
+        } else if (user.getRole_id() == 5) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            response.sendRedirect("sale-dashboard");
         } else {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);

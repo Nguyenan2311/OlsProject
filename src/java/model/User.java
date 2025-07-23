@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.util.Date;
 
-/**
- *
- * @author An_PC
- */
 public class User {
     private int id;
     private String email;
@@ -46,7 +38,7 @@ public class User {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -54,7 +46,7 @@ public class User {
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
@@ -62,7 +54,7 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -70,7 +62,7 @@ public class User {
     }
 
     public int getRole_id() {
-        return role_id;
+        return this.role_id;
     }
 
     public void setRole_id(int role_id) {
@@ -78,7 +70,7 @@ public class User {
     }
 
     public Date getDob() {
-        return dob;
+        return this.dob;
     }
 
     public void setDob(Date dob) {
@@ -86,7 +78,7 @@ public class User {
     }
 
     public Date getCreated_date() {
-        return created_date;
+        return this.created_date;
     }
 
     public void setCreated_date(Date created_date) {
@@ -94,7 +86,7 @@ public class User {
     }
 
     public String getFirst_name() {
-        return first_name;
+        return this.first_name;
     }
 
     public void setFirst_name(String first_name) {
@@ -102,7 +94,7 @@ public class User {
     }
 
     public String getLast_name() {
-        return last_name;
+        return this.last_name;
     }
 
     public void setLast_name(String last_name) {
@@ -110,7 +102,7 @@ public class User {
     }
 
     public String getGender() {
-        return gender;
+        return this.gender;
     }
 
     public void setGender(String gender) {
@@ -118,7 +110,7 @@ public class User {
     }
 
     public String getPhone() {
-        return phone;
+        return this.phone;
     }
 
     public void setPhone(String phone) {
@@ -126,7 +118,7 @@ public class User {
     }
 
     public String getImage() {
-        return image;
+        return this.image;
     }
 
     public void setImage(String image) {
@@ -134,7 +126,7 @@ public class User {
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public void setAddress(String address) {
@@ -142,23 +134,32 @@ public class User {
     }
 
     public int getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(int status) {
         this.status = status;
     }
 
-    @Override
     public String toString() {
-        return "User{" + "id=" + id + ", email=" + email + ", password=" + password + ", role_id=" + role_id + ", dob=" + dob + ", created_date=" + created_date + ", first_name=" + first_name + ", last_name=" + last_name + ", gender=" + gender + ", phone=" + phone + ", image=" + image + ", address=" + address + ", status=" + status + '}';
+        return "User{id=" + this.id + ", email=" + this.email + ", password=" + this.password + ", role_id=" + this.role_id + ", dob=" + this.dob + ", created_date=" + this.created_date + ", first_name=" + this.first_name + ", last_name=" + this.last_name + ", gender=" + this.gender + ", phone=" + this.phone + ", image=" + this.image + ", address=" + this.address + ", status=" + this.status + "}";
     }
+
     public String getRoleName() {
         return roleName;
     }
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+}
+
+
+
+    public String getFullName() {
+        String ln = this.last_name != null ? this.last_name : "";
+        String fn = this.first_name != null ? this.first_name : "";
+        return (ln + " " + fn).trim();
     }
 }
 

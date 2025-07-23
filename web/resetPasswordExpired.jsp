@@ -148,7 +148,7 @@
                
             </div>
 
-            <a href="home.html" class="home-link">Want to back? Home</a>
+            <a href="home" class="home-link">Want to back? Home</a>
         </div>
     </body>
 </html>

@@ -1,39 +1,32 @@
 package DAO;
+
 import context.DBContext;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.Course;
-import java.util.Date; // Thêm import này
+import model.CourseDetail;
+import model.CourseVisualContent;
+import model.PricePackage;
 import model.Tagline;
-public class CourseDAO extends DBContext {
-    
-    /**
-     * Lấy danh sách courses với filtering và pagination
+
+public class CourseDAO
+extends DBContext {
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
      */
-    public List<CourseListItem> getCourses(String search, String category, String sortBy, Integer taglineId, int limit, int offset) 
-            throws Exception {
-        List<CourseListItem> courses = new ArrayList<>();
-        
-        StringBuilder sql = new StringBuilder(
-            "SELECT DISTINCT c.id, c.subtitle as title, c.created_date, " +
-            "       ct.thumbnail_url, " +
-            "       t.name as tagline, " +
-            "       s.value as category, " +
-            "       c.number_of_learner, " +
-            "       c.total_duration, " +
-            "       MIN(pp.sale_price) as min_price, " +
-            "       MIN(pp.price) as original_price " +
-            "FROM Course c " +
-            "LEFT JOIN Setting s ON c.category_id = s.id " +
-            "LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id " +
-            "LEFT JOIN Tagline t ON ctt.tagline_id = t.id " +
-            "LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id " +
-            "LEFT JOIN PricePackage pp ON c.id = pp.course_id " +
-            "WHERE c.status = 1 "
-        );
-        
-        List<Object> params = new ArrayList<>();
+    public List<CourseListItem> getCourses(String search, String category, String sortBy, Integer taglineId, int limit, int offset) throws Exception {
+        ArrayList<CourseListItem> courses = new ArrayList<CourseListItem>();
+        StringBuilder sql = new StringBuilder("SELECT DISTINCT c.id, c.subtitle as title, c.created_date,        ct.thumbnail_url,        t.name as tagline,        s.value as category,        c.number_of_learner,        c.total_duration,        MIN(pp.sale_price) as min_price,        MIN(pp.price) as original_price FROM Course c LEFT JOIN Setting s ON c.category_id = s.id LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id LEFT JOIN Tagline t ON ctt.tagline_id = t.id LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id LEFT JOIN PricePackage pp ON c.id = pp.course_id WHERE c.status = 1 ");
+        ArrayList<Object> params = new ArrayList<Object>();
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND c.subtitle LIKE ? ");
             params.add("%" + search.trim() + "%");
@@ -46,25 +39,20 @@ public class CourseDAO extends DBContext {
             sql.append("AND ctt.tagline_id = ? ");
             params.add(taglineId);
         }
-        
         sql.append("GROUP BY c.id, c.subtitle, c.created_date, ct.thumbnail_url, t.name, s.value, c.number_of_learner, c.total_duration ");
-        sql.append("ORDER BY ").append(getSortColumn(sortBy)).append(" ");
+        sql.append("ORDER BY ").append(this.getSortColumn(sortBy)).append(" ");
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-        
         params.add(offset);
         params.add(limit);
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
         try {
-            conn = getConnection();
+            conn = this.getConnection();
             stmt = conn.prepareStatement(sql.toString());
-            
-            for (int i = 0; i < params.size(); i++) {
+            for (int i = 0; i < params.size(); ++i) {
                 stmt.setObject(i + 1, params.get(i));
             }
-            
             rs = stmt.executeQuery();
             while (rs.next()) {
                 CourseListItem course = new CourseListItem();
@@ -76,30 +64,27 @@ public class CourseDAO extends DBContext {
                 course.setNumberOfLearner(rs.getInt("number_of_learner"));
                 course.setTotalDuration(rs.getInt("total_duration"));
                 course.setCreatedDate(rs.getDate("created_date"));
-                
                 double salePrice = rs.getDouble("min_price");
                 double originalPrice = rs.getDouble("original_price");
                 course.setSalePrice(rs.wasNull() ? 0.0 : salePrice);
                 course.setOriginalPrice(rs.wasNull() ? 0.0 : originalPrice);
-                
                 courses.add(course);
             }
-        } finally {
-            closeResources(conn, stmt, rs);
+            this.closeResources(conn, stmt, rs);
         }
-        
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
         return courses;
     }
-    
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
     public int getTotalCourses(String search, String category, Integer taglineId) throws Exception {
-        StringBuilder sql = new StringBuilder(
-            "SELECT COUNT(DISTINCT c.id) FROM Course c " +
-            "LEFT JOIN Setting s ON c.category_id = s.id " +
-            "LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id " +
-            "WHERE c.status = 1 "
-        );
-        
-        List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT c.id) FROM Course c LEFT JOIN Setting s ON c.category_id = s.id LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id WHERE c.status = 1 ");
+        ArrayList<Object> params = new ArrayList<Object>();
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND c.subtitle LIKE ? ");
             params.add("%" + search.trim() + "%");
@@ -112,40 +97,41 @@ public class CourseDAO extends DBContext {
             sql.append("AND ctt.tagline_id = ? ");
             params.add(taglineId);
         }
-        
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
         try {
-            conn = getConnection();
+            conn = this.getConnection();
             stmt = conn.prepareStatement(sql.toString());
-            
-            for (int i = 0; i < params.size(); i++) {
+            for (int i = 0; i < params.size(); ++i) {
                 stmt.setObject(i + 1, params.get(i));
             }
-            
             rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1);
+                int n = rs.getInt(1);
+                this.closeResources(conn, stmt, rs);
+                return n;
             }
-        } finally {
-            closeResources(conn, stmt, rs);
+            this.closeResources(conn, stmt, rs);
         }
-        
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
         return 0;
     }
-    
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
     public List<Tagline> getAllTaglines() throws Exception {
-        List<Tagline> taglines = new ArrayList<>();
+        ArrayList<Tagline> taglines = new ArrayList<Tagline>();
         String sql = "SELECT id, name FROM [dbo].[Tagline]";
-        
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
         try {
-            conn = getConnection();
+            conn = this.getConnection();
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
             while (rs.next()) {
@@ -154,46 +140,40 @@ public class CourseDAO extends DBContext {
                 tagline.setName(rs.getString("name"));
                 taglines.add(tagline);
             }
-        } finally {
-            closeResources(conn, stmt, rs);
+            this.closeResources(conn, stmt, rs);
         }
-        
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
         return taglines;
     }
-    /**
-     * Get list of course categories
+
      */
     public List<String> getCategories() throws Exception {
-        List<String> categories = new ArrayList<>();
-        
-        String sql = "SELECT DISTINCT s.value FROM Setting s " +
-                    "INNER JOIN SettingType st ON s.setting_type_id = st.id " +
-                    "WHERE st.name = 'Course Categories' AND s.status = 1 " +
-                    "ORDER BY s.value";
-        
+        ArrayList<String> categories = new ArrayList<String>();
+        String sql = "SELECT DISTINCT s.value FROM Setting s INNER JOIN SettingType st ON s.setting_type_id = st.id WHERE st.name = 'Course Categories' AND s.status = 1 ORDER BY s.value";
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
-        
         try {
-            conn = getConnection();
+            conn = this.getConnection();
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
-            
             while (rs.next()) {
                 String category = rs.getString("value");
-                if (category != null && !category.trim().isEmpty()) {
-                    categories.add(category);
-                }
+                if (category == null || category.trim().isEmpty()) continue;
+                categories.add(category);
             }
-        } finally {
-            closeResources(conn, stmt, rs);
+            this.closeResources(conn, stmt, rs);
         }
-        
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
         return categories;
     }
-    
-    /**
+ /**
      * L?y course theo ID
      */
     public Course getCourseById(int courseId) throws Exception {
@@ -229,11 +209,148 @@ public class CourseDAO extends DBContext {
         
         return null;
     }
-    
-    /**
-     * L?y course details v?i ??y ?? th�ng tin
+    public CourseDetail getCourseDetailById(int courseId) throws Exception {
+        CourseDetail courseDetail = new CourseDetail();
+        courseDetail.setCourseInfo(this.getBasicCourseInfo(courseId));
+        courseDetail.setFullDescription(this.getCourseFullDescription(courseId));
+        courseDetail.setAllPricePackages(this.getAllPricePackagesForCourse(courseId));
+        courseDetail.setLowestPricePackage(this.getLowestPricePackage(courseId));
+        List<CourseVisualContent> allVisuals = this.getCourseVisuals(courseId);
+        courseDetail.setImages(allVisuals.stream().filter(v -> v.getType() == 1).collect(Collectors.toList()));
+        courseDetail.setVideos(allVisuals.stream().filter(v -> v.getType() == 2).collect(Collectors.toList()));
+        return courseDetail;
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
+    private CourseListItem getBasicCourseInfo(int courseId) throws Exception {
+        String sql = "SELECT c.id, c.subtitle as title, c.created_date, c.description,        ct.thumbnail_url, t.name as tagline FROM Course c LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id LEFT JOIN Tagline t ON ctt.tagline_id = t.id WHERE c.id = ? AND c.status = 1";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = this.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, courseId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                CourseListItem course = new CourseListItem();
+                course.setId(rs.getInt("id"));
+                course.setTitle(rs.getString("title"));
+                course.setDescription(rs.getString("description"));
+                course.setThumbnailUrl(rs.getString("thumbnail_url"));
+                course.setTagline(rs.getString("tagline"));
+                course.setCreatedDate(rs.getDate("created_date"));
+                CourseListItem courseListItem = course;
+                this.closeResources(conn, stmt, rs);
+                return courseListItem;
+            }
+            this.closeResources(conn, stmt, rs);
+        }
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
+        return null;
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
+    private String getCourseFullDescription(int courseId) throws Exception {
+        String sql = "SELECT description FROM ProductDescription WHERE course_id = ? AND status = 1";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = this.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, courseId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                String string = rs.getString("description");
+                this.closeResources(conn, stmt, rs);
+                return string;
+            }
+            this.closeResources(conn, stmt, rs);
+        }
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
+        return "";
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
+    private PricePackage getLowestPricePackage(int courseId) throws Exception {
+        String sql = "SELECT TOP 1 * FROM PricePackage WHERE course_id = ? AND (end_date IS NULL OR end_date >= GETDATE()) ORDER BY sale_price ASC, price ASC";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = this.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, courseId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                PricePackage pp = new PricePackage();
+                pp.setId(rs.getInt("id"));
+                pp.setCourseId(rs.getInt("course_id"));
+                pp.setTitle(rs.getString("title"));
+                pp.setPrice(rs.getDouble("price"));
+                pp.setSalePrice(rs.getDouble("sale_price"));
+                PricePackage pricePackage = pp;
+                this.closeResources(conn, stmt, rs);
+                return pricePackage;
+            }
+            this.closeResources(conn, stmt, rs);
+        }
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
+        return null;
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
+    private List<CourseVisualContent> getCourseVisuals(int courseId) throws Exception {
+        ArrayList<CourseVisualContent> visuals = new ArrayList<CourseVisualContent>();
+        String sql = "SELECT cvc.id, cvc.content, cvc.type, cvc.description FROM CourseVisualContent cvc JOIN CourseVisualContent_Course cvcc ON cvc.id = cvcc.course_visual_content_id WHERE cvcc.course_id = ? AND cvcc.status = 1";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = this.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, courseId);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                CourseVisualContent visual = new CourseVisualContent();
+                visual.setId(rs.getInt("id"));
+                visual.setContent(rs.getString("content"));
+                visual.setType(rs.getInt("type"));
+                visual.setDescription(rs.getString("description"));
+                visuals.add(visual);
+            }
+            this.closeResources(conn, stmt, rs);
+        }
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
+        return visuals;
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
      */
     public CourseDetailItem getCourseDetail(int courseId) throws Exception {
+
         StringBuilder sql = new StringBuilder(
             "SELECT c.id, c.subtitle as title, c.description, c.total_duration, " +
             "       c.number_of_learner, ct.thumbnail_url, t.name as tagline, " +
@@ -246,16 +363,14 @@ public class CourseDAO extends DBContext {
             "LEFT JOIN [User] u ON c.expert_id = u.id " +
             "WHERE c.id = ? AND c.status = 1"
         );
-        
+
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
         try {
-            conn = getConnection();
+            conn = this.getConnection();
             stmt = conn.prepareStatement(sql.toString());
             stmt.setInt(1, courseId);
-            
             rs = stmt.executeQuery();
             if (rs.next()) {
                 CourseDetailItem courseDetail = new CourseDetailItem();
@@ -268,61 +383,73 @@ public class CourseDAO extends DBContext {
                 courseDetail.setTagline(rs.getString("tagline"));
                 courseDetail.setCategory(rs.getString("category"));
                 courseDetail.setExpertName(rs.getString("expert_name"));
-                return courseDetail;
+                CourseDetailItem courseDetailItem = courseDetail;
+                this.closeResources(conn, stmt, rs);
+                return courseDetailItem;
             }
-        } finally {
-            closeResources(conn, stmt, rs);
+            this.closeResources(conn, stmt, rs);
         }
-        
+        catch (Throwable throwable) {
+            this.closeResources(conn, stmt, rs);
+            throw throwable;
+        }
         return null;
     }
-    
-    /**
-     * Helper method ?? get sort column
-     */
+
     private String getSortColumn(String sortBy) {
-    if (sortBy == null || sortBy.trim().isEmpty()) {
+        if (sortBy == null || sortBy.trim().isEmpty()) {
+            return "c.subtitle ASC";
+        }
+        switch (sortBy.toLowerCase().trim()) {
+            case "price": {
+                return "MIN(pp.sale_price) ASC";
+            }
+            case "category": {
+                return "s.value ASC";
+            }
+            case "learners": {
+                return "c.number_of_learner DESC";
+            }
+            case "duration": {
+                return "c.total_duration ASC";
+            }
+            case "newest": {
+                return "c.created_date DESC";
+            }
+            case "oldest": {
+                return "c.created_date ASC";
+            }
+        }
         return "c.subtitle ASC";
     }
 
-    switch (sortBy.toLowerCase().trim()) {
-        case "price": return "MIN(pp.sale_price) ASC";
-        case "category": return "s.value ASC";
-        case "learners": return "c.number_of_learner DESC";
-        case "duration": return "c.total_duration ASC";
-        case "newest": return "c.created_date DESC";
-        case "oldest": return "c.created_date ASC";
-        case "title":
-        default: return "c.subtitle ASC";
-    }
-}
-
-    /**
-     * Helper method ?? ?�ng resources
-     */
     private void closeResources(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {
             try {
                 rs.close();
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 System.err.println("Error closing ResultSet: " + e.getMessage());
             }
         }
         if (stmt != null) {
             try {
                 stmt.close();
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 System.err.println("Error closing Statement: " + e.getMessage());
             }
         }
         if (conn != null) {
             try {
                 conn.close();
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 System.err.println("Error closing Connection: " + e.getMessage());
             }
         }
     }
+
     
     /**
      * Get courses for admin management with pagination, filtering and owner info
@@ -666,7 +793,134 @@ public class CourseDAO extends DBContext {
     
     /**
      * Inner class cho course list item
+
+
+    public List<PricePackage> getAllPricePackagesForCourse(int courseId) throws Exception {
+        ArrayList<PricePackage> packages = new ArrayList<PricePackage>();
+        String sql = "SELECT * FROM PricePackage WHERE course_id = ? AND (end_date IS NULL OR end_date >= GETDATE()) ORDER BY price ASC";
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);){
+            stmt.setInt(1, courseId);
+            try (ResultSet rs = stmt.executeQuery();){
+                while (rs.next()) {
+                    PricePackage pp = new PricePackage();
+                    pp.setId(rs.getInt("id"));
+                    pp.setCourseId(rs.getInt("course_id"));
+                    pp.setTitle(rs.getString("title"));
+                    pp.setPrice(rs.getDouble("price"));
+                    pp.setSalePrice(rs.getDouble("sale_price"));
+                    pp.setStartDate((Date)rs.getDate("start_date"));
+                    pp.setEndDate((Date)rs.getDate("end_date"));
+                    packages.add(pp);
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.err.println("Error fetching all price packages for course ID " + courseId + ": " + e.getMessage());
+            throw new Exception("Could not retrieve price packages.", e);
+        }
+        return packages;
+    }
+
+    public List<PricePackage> getPricePackages(int courseId) throws Exception {
+        ArrayList<PricePackage> pricePackages = new ArrayList<PricePackage>();
+        String sql = "SELECT id, course_id, title, price, sale_price, start_date, end_date FROM PricePackage WHERE course_id = ? AND sale_price > 0 AND (start_date IS NULL OR start_date <= ?) AND (end_date IS NULL OR end_date >= ?) ORDER BY sale_price ASC";
+        LocalDateTime now = LocalDateTime.now();
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);){
+            Timestamp timestampNow = Timestamp.valueOf(now);
+            stmt.setInt(1, courseId);
+            stmt.setTimestamp(2, timestampNow);
+            stmt.setTimestamp(3, timestampNow);
+            try (ResultSet rs = stmt.executeQuery();){
+                while (rs.next()) {
+                    PricePackage pricePackage = new PricePackage();
+                    pricePackage.setId(rs.getInt("id"));
+                    pricePackage.setCourseId(rs.getInt("course_id"));
+                    pricePackage.setTitle(rs.getString("title"));
+                    pricePackage.setPrice(rs.getDouble("price"));
+                    pricePackage.setSalePrice(rs.getDouble("sale_price"));
+                    pricePackage.setStartDate((Date)rs.getDate("start_date"));
+                    pricePackage.setEndDate((Date)rs.getDate("end_date"));
+                    pricePackages.add(pricePackage);
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Error fetching price packages: " + e.getMessage(), e);
+        }
+        return pricePackages;
+    }
+
+    /*
+     * Enabled aggressive block sorting
+     * Enabled unnecessary exception pruning
+     * Enabled aggressive exception aggregation
+
      */
+    public PricePackage getPricePackageById(int pricePackageId) throws Exception {
+        String sql = "SELECT * FROM PricePackage WHERE id = ?";
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);){
+            stmt.setInt(1, pricePackageId);
+            try (ResultSet rs = stmt.executeQuery();){
+                if (!rs.next()) return null;
+                PricePackage pp = new PricePackage();
+                pp.setId(rs.getInt("id"));
+                pp.setCourseId(rs.getInt("course_id"));
+                pp.setTitle(rs.getString("title"));
+                pp.setPrice(rs.getDouble("price"));
+                pp.setSalePrice(rs.getDouble("sale_price"));
+                pp.setStartDate((Date)rs.getDate("start_date"));
+                pp.setEndDate((Date)rs.getDate("end_date"));
+                PricePackage pricePackage = pp;
+                return pricePackage;
+            }
+        }
+        catch (SQLException e) {
+            System.err.println("Error fetching price package by ID " + pricePackageId + ": " + e.getMessage());
+            throw new Exception("Could not retrieve price package by ID.", e);
+        }
+    }
+ 
+ // Trong file CourseDAO.java
+
+// Thay đổi kiểu trả về từ List<Course> thành List<CourseListItem>
+public List<CourseListItem> getActiveCoursesByCustomerId(int customerId) {
+    List<CourseListItem> list = new ArrayList<>();
+    // Cập nhật câu lệnh SQL để JOIN các bảng cần thiết và lấy đủ thông tin
+    String sql = "SELECT c.id, c.subtitle as title, c.description, t.name as tagline, ct.thumbnail_url " +
+                 "FROM Course c " +
+                 "JOIN PersonalCourse pc ON c.id = pc.course_id " +
+                 "LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id " +
+                 "LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id " +
+                 "LEFT JOIN Tagline t ON ctt.tagline_id = t.id " +
+                 "WHERE pc.customer_id = ? AND pc.status = 1";
+
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, customerId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                // Tạo đối tượng CourseListItem thay vì Course
+                CourseListItem courseItem = new CourseListItem();
+                courseItem.setId(rs.getInt("id"));
+                courseItem.setTitle(rs.getString("title")); // JSP đang dùng subtitle, nên đổi tên hoặc dùng title
+                courseItem.setDescription(rs.getString("description"));
+                courseItem.setTagline(rs.getString("tagline"));
+                courseItem.setThumbnailUrl(rs.getString("thumbnail_url"));
+                
+                list.add(courseItem);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
     public static class CourseListItem {
         private int id;
         private String title;
@@ -674,68 +928,121 @@ public class CourseDAO extends DBContext {
         private String tagline;
         private String category;
         private int numberOfLearner;
+        private String description;
         private int totalDuration;
         private double salePrice;
         private double originalPrice;
-        private Date createdDate; // <-- THÊM TRƯỜNG MỚI (đổi tên cho đúng chuẩn Java)
-        // Constructors
-        public CourseListItem() {}
-        
-        // Getters and Setters
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-        
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        
-        public String getThumbnailUrl() { return thumbnailUrl; }
-        public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
-        
-        public String getTagline() { return tagline; }
-        public void setTagline(String tagline) { this.tagline = tagline; }
-        
-        public String getCategory() { return category; }
-        public void setCategory(String category) { this.category = category; }
-        
-        public int getNumberOfLearner() { return numberOfLearner; }
-        public void setNumberOfLearner(int numberOfLearner) { this.numberOfLearner = numberOfLearner; }
-        
-        public int getTotalDuration() { return totalDuration; }
-        public void setTotalDuration(int totalDuration) { this.totalDuration = totalDuration; }
-        
-        public double getSalePrice() { return salePrice; }
-        public void setSalePrice(double salePrice) { this.salePrice = salePrice; }
-        
-        public double getOriginalPrice() { return originalPrice; }
-        public void setOriginalPrice(double originalPrice) { this.originalPrice = originalPrice; }
-        // CẬP NHẬT: Thêm Getter/Setter cho trường mới
-        public Date getCreatedDate() { return createdDate; }
-        public void setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
-        // ... các phương thức helper khác giữ nguyên ...
+        private Date createdDate;
+
+        public int getId() {
+            return this.id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return this.title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getThumbnailUrl() {
+            return this.thumbnailUrl;
+        }
+
+        public void setThumbnailUrl(String thumbnailUrl) {
+            this.thumbnailUrl = thumbnailUrl;
+        }
+
+        public String getTagline() {
+            return this.tagline;
+        }
+
+        public void setTagline(String tagline) {
+            this.tagline = tagline;
+        }
+
+        public String getCategory() {
+            return this.category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public int getNumberOfLearner() {
+            return this.numberOfLearner;
+        }
+
+        public void setNumberOfLearner(int numberOfLearner) {
+            this.numberOfLearner = numberOfLearner;
+        }
+
+        public int getTotalDuration() {
+            return this.totalDuration;
+        }
+
+        public void setTotalDuration(int totalDuration) {
+            this.totalDuration = totalDuration;
+        }
+
+        public double getSalePrice() {
+            return this.salePrice;
+        }
+
+        public void setSalePrice(double salePrice) {
+            this.salePrice = salePrice;
+        }
+
+        public double getOriginalPrice() {
+            return this.originalPrice;
+        }
+
+        public void setOriginalPrice(double originalPrice) {
+            this.originalPrice = originalPrice;
+        }
+
+        public Date getCreatedDate() {
+            return this.createdDate;
+        }
+
+        public void setCreatedDate(Date createdDate) {
+            this.createdDate = createdDate;
+        }
+
         public String getFormattedDuration() {
-            if (totalDuration < 60) {
-                return totalDuration + " mins";
-            } else {
-                int hours = totalDuration / 60;
-                int mins = totalDuration % 60;
-                return hours + "h " + (mins > 0 ? mins + "m" : "");
+            if (this.totalDuration < 60) {
+                return this.totalDuration + " mins";
             }
+            int hours = this.totalDuration / 60;
+            int mins = this.totalDuration % 60;
+            return hours + "h " + (String)(mins > 0 ? mins + "m" : "");
         }
-        
+
         public boolean hasDiscount() {
-            return originalPrice > 0 && originalPrice > salePrice;
+            return this.originalPrice > 0.0 && this.originalPrice > this.salePrice;
         }
-        
+
         public double getDiscountPercentage() {
-            if (hasDiscount()) {
-                return ((originalPrice - salePrice) / originalPrice) * 100;
+            if (this.hasDiscount()) {
+                return (this.originalPrice - this.salePrice) / this.originalPrice * 100.0;
             }
-            return 0;
+            return 0.0;
+        }
+
+        public String getDescription() {
+            return this.description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
     }
-    /**
-     * Inner class cho course detail
-     */
+
     public static class CourseDetailItem {
         private int id;
         private String title;
@@ -746,46 +1053,86 @@ public class CourseDAO extends DBContext {
         private String tagline;
         private String category;
         private String expertName;
-        
-        // Constructors
-        public CourseDetailItem() {}
-        
-        // Getters and Setters
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-        
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
-        
-        public int getTotalDuration() { return totalDuration; }
-        public void setTotalDuration(int totalDuration) { this.totalDuration = totalDuration; }
-        
-        public int getNumberOfLearner() { return numberOfLearner; }
-        public void setNumberOfLearner(int numberOfLearner) { this.numberOfLearner = numberOfLearner; }
-        
-        public String getThumbnailUrl() { return thumbnailUrl; }
-        public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
-        
-        public String getTagline() { return tagline; }
-        public void setTagline(String tagline) { this.tagline = tagline; }
-        
-        public String getCategory() { return category; }
-        public void setCategory(String category) { this.category = category; }
-        
-        public String getExpertName() { return expertName; }
-        public void setExpertName(String expertName) { this.expertName = expertName; }
-        
+
+        public int getId() {
+            return this.id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return this.title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return this.description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public int getTotalDuration() {
+            return this.totalDuration;
+        }
+
+        public void setTotalDuration(int totalDuration) {
+            this.totalDuration = totalDuration;
+        }
+
+        public int getNumberOfLearner() {
+            return this.numberOfLearner;
+        }
+
+        public void setNumberOfLearner(int numberOfLearner) {
+            this.numberOfLearner = numberOfLearner;
+        }
+
+        public String getThumbnailUrl() {
+            return this.thumbnailUrl;
+        }
+
+        public void setThumbnailUrl(String thumbnailUrl) {
+            this.thumbnailUrl = thumbnailUrl;
+        }
+
+        public String getTagline() {
+            return this.tagline;
+        }
+
+        public void setTagline(String tagline) {
+            this.tagline = tagline;
+        }
+
+        public String getCategory() {
+            return this.category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getExpertName() {
+            return this.expertName;
+        }
+
+        public void setExpertName(String expertName) {
+            this.expertName = expertName;
+        }
+
         public String getFormattedDuration() {
-            if (totalDuration < 60) {
-                return totalDuration + " mins";
-            } else {
-                int hours = totalDuration / 60;
-                int mins = totalDuration % 60;
-                return hours + "h " + (mins > 0 ? mins + "m" : "");
+            if (this.totalDuration < 60) {
+                return this.totalDuration + " mins";
             }
+            int hours = this.totalDuration / 60;
+            int mins = this.totalDuration % 60;
+            return hours + "h " + (String)(mins > 0 ? mins + "m" : "");
         }
     }
 }

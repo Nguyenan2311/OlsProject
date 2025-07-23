@@ -198,7 +198,7 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Search courses...">
                 </div>
-                <button class="signup-btn">Sign Up</button>
+                <button href="login" class="signup-btn" >Sign Up</button>
             </div>
         </nav>
         <div class="container">
@@ -217,7 +217,7 @@
                     <input type="text" id="email" name="email" placeholder="✉ Email">
                 </div>
                 <button type="submit" class="submit-btn">Send Reset Link</button>
-                <a href="login.jsp" class="login-link">Want to back? Login</a>
+                <a href="login" class="login-link">Want to back? Login</a>
             </form>
 
             <script>

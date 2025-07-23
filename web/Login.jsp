@@ -75,6 +75,7 @@
     </style>
 </head>
 <body>
+
     <%@include file="header.jsp" %>
 
     <div class="container">
@@ -111,6 +112,7 @@
                 </div>
             </form>
         </div>
+
     </div>
 
     <!-- Bootstrap JS -->

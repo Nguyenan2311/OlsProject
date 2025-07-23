@@ -504,35 +504,35 @@
                 <img src="img/logo.png" alt="EduLearn" class="logo-img">
             </a>
         </div>
-        
-        <!-- Mobile Menu Toggle -->
-        <div class="mobile-menu-toggle">
-            <i class="fas fa-bars"></i>
-        </div>
-        
-        <!-- Main Navigation -->
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li class="nav-item"><a href="home" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="courses" class="nav-link">Courses</a></li>
-                <li class="nav-item"><a href="bloglist" class="nav-link">Blog</a></li>
-                <c:if test="${not empty sessionScope.user}">
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">My Account <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="userprofile" class="dropdown-item"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a href="myCourses" class="dropdown-item"><i class="fas fa-book"></i> My Courses</a></li>
-                            <li><a href="myRegistrations" class="dropdown-item"><i class="fas fa-book"></i> My Registrations</a></li>
-                        </ul>
-                    </li>
-                </c:if>
-            </ul>
+
+        <nav>
+            <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
+           <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
+            <a href="bloglist">Blog</a>
+            <a href="userprofile">About</a>
+            <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link active">My Registrations</a>
+        </c:if>
         </nav>
-        
-        <!-- Header Actions -->
-        <div class="header-actions">
-            <!-- Search Form -->
-           
+        <div class="header-right">
+            <!-- Form tìm kiếm -->
+            <form action="search" method="GET" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Search">
+            </form>
+            <!-- Nút search-button (giữ nguyên) -->
+            <button class="search-button">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+            <c:if test="${not empty sessionScope.user}">
+                <a href="logout" class="signup-button" style="color: white ; background-color: red">Log out</a>
+            </c:if>
+                 <c:if test="${empty sessionScope.user}">
+                <a href="login" class="signup-b"style="color: white ; background-color: red">Log in</a>
+            </c:if>
+                
+
             
             <!-- User Actions -->
             <div class="user-actions">
