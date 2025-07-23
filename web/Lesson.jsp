@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>${course.subtitle} - Course Lessons</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -322,9 +323,15 @@
             }
 
             @keyframes pulse {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-                100% { transform: scale(1); }
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.1);
+                }
+                100% {
+                    transform: scale(1);
+                }
             }
 
             .lesson-number {
@@ -533,8 +540,12 @@
 
             /* Loading animation */
             @keyframes shimmer {
-                0% { transform: translateX(-100%); }
-                100% { transform: translateX(100%); }
+                0% {
+                    transform: translateX(-100%);
+                }
+                100% {
+                    transform: translateX(100%);
+                }
             }
 
             .loading-shimmer {
@@ -559,12 +570,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-graduation-cap"></i> ${course.subtitle}</h2>
-                <div class="course-progress">
-                    <div class="course-progress-text">Course Progress</div>
-                    <div class="course-progress-bar">
-                        <div class="course-progress-fill"></div>
-                    </div>
-                </div>
+
             </div>
 
             <c:forEach items="${listModule}" var="module">
@@ -632,12 +638,6 @@
         <div class="content-area">
             <div class="content-header">
                 <h1>Lesson Content</h1>
-                <div class="progress-container">
-                    <span class="progress-text">Progress: 65%</span>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: 65%"></div>
-                    </div>
-                </div>
             </div>
 
             <c:if test="${not empty param.lessonId}">
@@ -692,7 +692,7 @@
             function toggleModule(element) {
                 element.classList.toggle('collapsed');
                 const chapter = element.nextElementSibling;
-                
+
                 if (chapter.style.display === 'none') {
                     chapter.style.display = 'block';
                     chapter.style.animation = 'slideDown 0.3s ease';
@@ -738,7 +738,7 @@
                     // Scroll to active lesson with smooth animation
                     setTimeout(() => {
                         activeLesson.scrollIntoView({
-                            behavior: 'smooth', 
+                            behavior: 'smooth',
                             block: 'center',
                             inline: 'nearest'
                         });
@@ -748,11 +748,11 @@
                 // Add hover effects to lesson items
                 const lessonItems = document.querySelectorAll('.lesson-item');
                 lessonItems.forEach(item => {
-                    item.addEventListener('mouseenter', function() {
+                    item.addEventListener('mouseenter', function () {
                         this.style.transform = 'translateX(8px) scale(1.02)';
                     });
-                    
-                    item.addEventListener('mouseleave', function() {
+
+                    item.addEventListener('mouseleave', function () {
                         if (!this.classList.contains('active')) {
                             this.style.transform = 'translateX(0) scale(1)';
                         }

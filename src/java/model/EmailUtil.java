@@ -18,8 +18,11 @@ public class EmailUtil {
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final int SMTP_PORT = 587;
     private static final String EMAIL = "tuananh2004ab@gmail.com";
+
+   
     private static final String PASSWORD = "wowl axzr waik jmsx";
     private static final int SMTP_TIMEOUT = 5000;
+
 
     public static boolean sendPasswordResetEmail(String toEmail, String resetLink) {
         if (!EmailUtil.isValidEmail(toEmail)) {

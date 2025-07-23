@@ -16,6 +16,7 @@ public class User {
     private String image;
     private String address;
     private int status;
+    private String roleName; // display role name for admin user list
 
     public User() {
     }
@@ -144,9 +145,21 @@ public class User {
         return "User{id=" + this.id + ", email=" + this.email + ", password=" + this.password + ", role_id=" + this.role_id + ", dob=" + this.dob + ", created_date=" + this.created_date + ", first_name=" + this.first_name + ", last_name=" + this.last_name + ", gender=" + this.gender + ", phone=" + this.phone + ", image=" + this.image + ", address=" + this.address + ", status=" + this.status + "}";
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+}
+
+
+
     public String getFullName() {
         String ln = this.last_name != null ? this.last_name : "";
         String fn = this.first_name != null ? this.first_name : "";
         return (ln + " " + fn).trim();
     }
 }
+

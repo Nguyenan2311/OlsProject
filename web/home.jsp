@@ -1,11 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edemy - Home</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Montserrat:700&display=swap" rel="stylesheet">
         <style>
             * {
                 margin: 0;
@@ -14,34 +14,31 @@
             }
 
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+                font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                
                 min-height: 100vh;
                 overflow-x: hidden;
+                padding-top: 70px; /* Space for fixed header */
+            }
+            
+            /* Ensure content doesn't get hidden behind fixed header */
+            .main-content, .content {
+                padding-top: 20px;
             }
 
             /* Banner (Slider) */
             .banner {
-                width: 100%;
+                width: calc(100% - 40px);
                 height: 400px;
                 position: relative;
                 overflow: hidden;
                 border-radius: 20px;
-                margin: 20px;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                margin: 20px auto;
+                
+                max-width: 1400px;
             }
 
-            .banner::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(45deg, rgba(102,126,234,0.8), rgba(118,75,162,0.8));
-                z-index: 1;
-            }
-
+            
             .banner img {
                 width: 100%;
                 height: 100%;
@@ -67,10 +64,12 @@
             /* Layout */
             .content {
                 display: flex;
-                padding: 40px 20px;
+                padding: 20px;
                 gap: 40px;
                 max-width: 1400px;
-                margin: 0 auto;
+                margin: 0 auto 40px;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .main-content {
@@ -243,14 +242,54 @@
 
             /* Sliders */
             .slider-wrapper {
+                width: 100%;
+                margin: 0 auto;
+                position: relative;
+            }
+            
+            .slider-nav {
                 display: flex;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
+                justify-content: center;
+                align-items: center;
+                margin: 15px auto 40px;
                 gap: 20px;
+            }
+            
+            .slider-dots {
+                display: flex;
+                gap: 10px;
                 padding: 0 20px;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+            }
+            
+            .slider-arrow {
+                background: #fff;
+                border: 2px solid #667eea;
+                color: #667eea;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .slider-arrow:hover {
+                background: #667eea;
+                color: #fff;
+                transform: scale(1.1);
+            }
+            
+            .slick-dots li button:before {
+                font-size: 12px;
+                color: #667eea;
+                opacity: 0.5;
+            }
+            
+            .slick-dots li.slick-active button:before {
+                color: #667eea;
+                opacity: 1;
             }
 
             .slider-wrapper::-webkit-scrollbar {
@@ -472,7 +511,12 @@
             }
         </style>
         <script src="https://kit.fontawesome.com/8807c30b90.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     </head>
+    <%@include file = "header.jsp" %>
     <body>
         <!-- Floating background shapes -->
         <div class="floating-shapes">
@@ -481,9 +525,23 @@
             <div class="shape"></div>
         </div>
 
-        <%@include file = "header.jsp" %>
+        
 
-        <div class="slider-wrapper">
+        <!-- Hero Section -->
+        <section style="width:100%;padding:0;margin:0 0 40px 0;">
+            <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;padding:40px 24px 0 24px;flex-wrap:wrap;">
+                <div style="flex:2;min-width:320px;">
+                    <h1 style="font-family:'Montserrat',Roboto,sans-serif;font-size:2.7rem;font-weight:700;line-height:1.2;color:#2d3a4b;margin-bottom:18px;letter-spacing:1px;">Welcome to <span style="background:linear-gradient(90deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Edemy</span></h1>
+                    <p style="font-size:1.25rem;color:#6c7a89;margin-bottom:30px;max-width:550px;">Empowering your learning journey with top-rated courses, expert instructors, and a vibrant community. Start exploring and unlock your potential today!</p>
+                    <a href="myCourses" style="display:inline-block;background:linear-gradient(90deg,#4e9af1,#2563eb);color:#fff;font-weight:600;padding:14px 38px;border-radius:8px;font-size:1.15rem;box-shadow:0 4px 24px rgba(60,100,180,0.12);text-decoration:none;transition:background 0.2s;">My Courses</a>
+                </div>
+                <div style="flex:1;min-width:240px;text-align:center;">
+                    <img src="https://nacm.org/images/banners/Online.png" alt="Learning" style="max-width:340px;width:100%;border-radius:20px;box-shadow:0 8px 32px rgba(102,126,234,0.15);background:#fff;"/>
+                </div>
+            </div>
+        </section>
+
+        <div class="slider-wrapper" id="main-slider">
             <c:forEach items="${listSlider}" var="slider">
                 <div class="banner-container">
                     <div class="banner">
@@ -495,21 +553,26 @@
                 </div>
             </c:forEach>
         </div>
+        <div class="slider-nav" id="slider-nav">
+            <button class="slider-arrow prev-arrow"><i class="fas fa-chevron-left"></i></button>
+            <div class="slider-dots"></div>
+            <button class="slider-arrow next-arrow"><i class="fas fa-chevron-right"></i></button>
+        </div>
 
-        <div class="content">
+        <div class="content" style="padding-top: 0;">
             <!-- Main content -->
             <div class="main-content">
                 <div class="hot-posts">
-                    <h3>? Hot Posts</h3>
+                    <h3><i class="fa-solid fa-fire" style="color:#ff9800;"></i> Hot Posts</h3>
                     <div class="scroll-container">
                         <div class="scroll-content">
                             <c:forEach items="${listPost}" var="o">
-                                <div class="card">
+                                <div class="card" style="box-shadow:0 8px 32px rgba(255,152,0,0.08);">
                                     <a href="blogDetail?bid=${o.id}">
                                         <img src="${o.thumbnail_url}" alt="${o.title}">
                                         <p>${o.title}</p>
                                     </a>
-                                    <p class="post-date">${o.created_date}</p>
+                                    <p class="post-date"><i class="fa-regular fa-clock"></i> ${o.created_date}</p>
                                 </div>
                             </c:forEach>
                         </div>
@@ -517,16 +580,16 @@
                 </div>
 
                 <div class="featured-subjects">
-                    <h3>? Featured Subjects</h3>
+                    <h3><i class="fa-solid fa-star" style="color:#ffd700;"></i> Featured Subjects</h3>
                     <div class="scroll-container">
                         <div class="scroll-content">
                             <c:forEach items="${listCourse}" var="o">
-                                <div class="card">
+                                <div class="card" style="box-shadow:0 8px 32px rgba(255,215,0,0.09);">
                                     <a href="lesson?courseId=${o.id}">
                                         <img src="${o.thumbnailUrl}" alt="${o.title}">
                                         <p>${o.title}</p>
                                     </a>
-                                    <p class="post-date">${o.tagline}</p>
+                                    <p class="post-date"><i class="fa-solid fa-quote-left" style="color:#764ba2;"></i> ${o.tagline}</p>
                                 </div>
                             </c:forEach>
                         </div>
@@ -537,21 +600,21 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <div class="sidebar-item latest-posts">
-                    <h3>? Latest Posts</h3>
+                    <h3><i class="fa-regular fa-clock" style="color:#2563eb;"></i> Latest Posts</h3>
                     <c:forEach items="${listLastPost}" var="o">                             
                         <div class="post-item">
                             <p class="post-title">
                                 <a href="blogDetail?bid=${o.id}">${o.title}</a>
                             </p>
                             <p class="post-date">
-                                ? ${o.created_date}
+                                <i class="fa-regular fa-calendar"></i> ${o.created_date}
                             </p>
                         </div>
                     </c:forEach>
                 </div>
                 
                 <div class="sidebar-item contact-links">
-                    <h3>? Quick Links</h3>
+                    <h3><i class="fa-solid fa-link" style="color:#27ae60;"></i> Quick Links</h3>
                     <div class="quick-link-item">
                         <i class="fa-solid fa-envelope"></i>
                         <a href="mailto:abcxyz@gmail.com">abcxyz@gmail.com</a>
@@ -568,6 +631,46 @@
             </div>
         </div>
 
+        <!-- Testimonials Section -->
+   
+
         <%@include file="footer.jsp" %>
+        
+        <script>
+            $(document).ready(function(){
+                $('#main-slider').slick({
+                    dots: true,
+                    infinite: true,
+                    speed: 800,
+                    slidesToShow: 1,
+                    adaptiveHeight: true,
+                    autoplay: true,
+                    autoplaySpeed: 5000,
+                    pauseOnHover: true,
+                    prevArrow: $('.prev-arrow'),
+                    nextArrow: $('.next-arrow'),
+                    appendDots: $('.slider-dots'),
+                    responsive: [
+                        {
+                            breakpoint: 768,
+                            settings: {
+                                arrows: false,
+                                dots: true
+                            }
+                        }
+                    ]
+                });
+                
+                // Pause on hover
+                $('.banner').hover(
+                    function() {
+                        $('#main-slider').slick('slickPause');
+                    },
+                    function() {
+                        $('#main-slider').slick('slickPlay');
+                    }
+                );
+            });
+        </script>
     </body>
 </html>

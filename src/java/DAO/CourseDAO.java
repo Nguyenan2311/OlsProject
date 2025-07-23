@@ -149,8 +149,6 @@ extends DBContext {
         return taglines;
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
      */
     public List<String> getCategories() throws Exception {
         ArrayList<String> categories = new ArrayList<String>();
@@ -352,7 +350,20 @@ extends DBContext {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public CourseDetailItem getCourseDetail(int courseId) throws Exception {
-        StringBuilder sql = new StringBuilder("SELECT c.id, c.subtitle as title, c.description, c.total_duration,        c.number_of_learner, ct.thumbnail_url, t.name as tagline,        s.value as category, u.full_name as expert_name FROM Course c LEFT JOIN Setting s ON c.category_id = s.id LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id LEFT JOIN Tagline t ON ctt.tagline_id = t.id LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id LEFT JOIN [User] u ON c.expert_id = u.id WHERE c.id = ? AND c.status = 1");
+
+        StringBuilder sql = new StringBuilder(
+            "SELECT c.id, c.subtitle as title, c.description, c.total_duration, " +
+            "       c.number_of_learner, ct.thumbnail_url, t.name as tagline, " +
+            "       s.value as category, (u.first_name + ' ' + u.last_name) as expert_name " +
+            "FROM Course c " +
+            "LEFT JOIN Setting s ON c.category_id = s.id " +
+            "LEFT JOIN Course_Tagline ctt ON c.id = ctt.course_id " +
+            "LEFT JOIN Tagline t ON ctt.tagline_id = t.id " +
+            "LEFT JOIN Course_Thumbnails ct ON c.id = ct.course_id " +
+            "LEFT JOIN [User] u ON c.expert_id = u.id " +
+            "WHERE c.id = ? AND c.status = 1"
+        );
+
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -439,6 +450,351 @@ extends DBContext {
         }
     }
 
+    
+    /**
+     * Get courses for admin management with pagination, filtering and owner info
+     */
+    public List<CourseManagementItem> getCoursesForManagement(String search, String category, String status, int limit, int offset) throws Exception {
+        List<CourseManagementItem> courses = new ArrayList<>();
+        
+        // Simplified query without complex joins first
+        StringBuilder sql = new StringBuilder(
+            "SELECT c.id, c.subtitle as name, " +
+            "       ISNULL(s.value, 'Unknown') as category, " +
+            "       0 as lesson_count, " +
+            "       ISNULL(u.first_name + ' ' + u.last_name, 'Unknown') as owner_name, " +
+            "       CASE WHEN c.status = 1 THEN 'Active' ELSE 'Inactive' END as status " +
+            "FROM Course c " +
+            "LEFT JOIN Setting s ON c.category_id = s.id " +
+            "LEFT JOIN [User] u ON c.expert_id = u.id " +
+            "WHERE 1=1 "
+        );
+        
+        List<Object> params = new ArrayList<>();
+        
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("AND c.subtitle LIKE ? ");
+            params.add("%" + search.trim() + "%");
+        }
+        
+        if (category != null && !category.trim().isEmpty()) {
+            sql.append("AND s.value = ? ");
+            params.add(category.trim());
+        }
+        
+        if (status != null && !status.trim().isEmpty()) {
+            if ("Active".equals(status)) {
+                sql.append("AND c.status = 1 ");
+            } else if ("Inactive".equals(status)) {
+                sql.append("AND c.status = 0 ");
+            }
+        }
+        
+        sql.append("ORDER BY c.id DESC");
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql.toString());
+            
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            
+            rs = stmt.executeQuery();
+            
+            int count = 0;
+            int added = 0;
+            while (rs.next()) {
+                if (count >= offset && added < limit) {
+                    CourseManagementItem item = new CourseManagementItem();
+                    item.setId(rs.getInt("id"));
+                    item.setName(rs.getString("name"));
+                    item.setCategory(rs.getString("category"));
+                    item.setLessonCount(rs.getInt("lesson_count"));
+                    item.setOwnerName(rs.getString("owner_name"));
+                    item.setStatus(rs.getString("status"));
+                    courses.add(item);
+                    added++;
+                }
+                count++;
+                if (added >= limit) break;
+            }
+        } finally {
+            closeResources(conn, stmt, rs);
+        }
+        
+        return courses;
+    }
+    
+    /**
+     * Get total count of courses for management with filters
+     */
+    public int getTotalCoursesForManagement(String search, String category, String status) throws Exception {
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(DISTINCT c.id) " +
+            "FROM Course c " +
+            "LEFT JOIN Setting s ON c.category_id = s.id " +
+            "WHERE 1=1 "
+        );
+        
+        List<Object> params = new ArrayList<>();
+        
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("AND c.subtitle LIKE ? ");
+            params.add("%" + search.trim() + "%");
+        }
+        
+        if (category != null && !category.trim().isEmpty()) {
+            sql.append("AND s.value = ? ");
+            params.add(category.trim());
+        }
+        
+        if (status != null && !status.trim().isEmpty()) {
+            if ("Active".equals(status)) {
+                sql.append("AND c.status = 1 ");
+            } else if ("Inactive".equals(status)) {
+                sql.append("AND c.status = 0 ");
+            }
+        }
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql.toString());
+            
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } finally {
+            closeResources(conn, stmt, rs);
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * Update course status
+     */
+    public boolean updateCourseStatus(int courseId, int status) throws Exception {
+        String sql = "UPDATE Course SET status = ?, updated_date = GETDATE() WHERE id = ?";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, status);
+            stmt.setInt(2, courseId);
+            
+            return stmt.executeUpdate() > 0;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+    
+    /**
+     * Get course by ID for editing (including inactive courses)
+     */
+    public Course getCourseByIdForEdit(int courseId) throws Exception {
+        String sql = "SELECT * FROM Course WHERE id = ?";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, courseId);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                Course course = new Course();
+                course.setId(rs.getInt("id"));
+                course.setSubtitle(rs.getString("subtitle"));
+                course.setExpert_id(rs.getInt("expert_id"));
+                course.setTotal_duration(rs.getInt("total_duration"));
+                course.setCategory_id(rs.getInt("category_id"));
+                course.setDescription(rs.getString("description"));
+                course.setStatus(rs.getInt("status"));
+                course.setUpdated_date(rs.getDate("updated_date"));
+                course.setCreated_date(rs.getDate("created_date"));
+                course.setNumber_of_learner(rs.getInt("number_of_learner"));
+                return course;
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+        return null;
+    }
+    /**
+     * Insert new course
+     */
+    public boolean insertCourse(Course course) throws Exception {
+        String sql = "INSERT INTO Course (subtitle, expert_id, total_duration, category_id, description, status) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, course.getSubtitle());
+            stmt.setInt(2, course.getExpert_id());
+            stmt.setInt(3, course.getTotal_duration());
+            stmt.setInt(4, course.getCategory_id());
+            stmt.setString(5, course.getDescription());
+            stmt.setInt(6, course.getStatus());
+            
+            return stmt.executeUpdate() > 0;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+    
+    /**
+     * Update existing course
+     */
+    public boolean updateCourse(Course course) throws Exception {
+        String sql = "UPDATE Course SET subtitle = ?, expert_id = ?, total_duration = ?, category_id = ?, " +
+                    "description = ?, status = ?, updated_date = GETDATE() WHERE id = ?";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, course.getSubtitle());
+            stmt.setInt(2, course.getExpert_id());
+            stmt.setInt(3, course.getTotal_duration());
+            stmt.setInt(4, course.getCategory_id());
+            stmt.setString(5, course.getDescription());
+            stmt.setInt(6, course.getStatus());
+            stmt.setInt(7, course.getId());
+            
+            return stmt.executeUpdate() > 0;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+    
+    /**
+     * Get category ID by name
+     */
+    public int getCategoryIdByName(String categoryName) throws Exception {
+        String sql = "SELECT s.id FROM Setting s " +
+                    "INNER JOIN SettingType st ON s.setting_type_id = st.id " +
+                    "WHERE st.name = 'Course Categories' AND s.value = ? AND s.status = 1";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, categoryName);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+        return 0;
+    }
+    
+    /**
+     * Get category name by ID
+     */
+    public String getCategoryNameById(int categoryId) throws Exception {
+        String sql = "SELECT s.value FROM Setting s " +
+                    "INNER JOIN SettingType st ON s.setting_type_id = st.id " +
+                    "WHERE st.name = 'Course Categories' AND s.id = ? AND s.status = 1";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, categoryId);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getString("value");
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+        return null;
+    }
+    
+    /**
+     * Inner class for course management item
+     */
+    public static class CourseManagementItem {
+        private int id;
+        private String name;
+        private String category;
+        private int lessonCount;
+        private String ownerName;
+        private String status;
+        
+        // Constructors
+        public CourseManagementItem() {}
+        
+        // Getters and Setters
+        public int getId() { return id; }
+        public void setId(int id) { this.id = id; }
+        
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        
+        public String getCategory() { return category; }
+        public void setCategory(String category) { this.category = category; }
+        
+        public int getLessonCount() { return lessonCount; }
+        public void setLessonCount(int lessonCount) { this.lessonCount = lessonCount; }
+        
+        public String getOwnerName() { return ownerName; }
+        public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+        
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+    }
+    
+    
+    /**
+     * Inner class cho course list item
+
+
     public List<PricePackage> getAllPricePackagesForCourse(int courseId) throws Exception {
         ArrayList<PricePackage> packages = new ArrayList<PricePackage>();
         String sql = "SELECT * FROM PricePackage WHERE course_id = ? AND (end_date IS NULL OR end_date >= GETDATE()) ORDER BY price ASC";
@@ -500,6 +856,7 @@ extends DBContext {
      * Enabled aggressive block sorting
      * Enabled unnecessary exception pruning
      * Enabled aggressive exception aggregation
+
      */
     public PricePackage getPricePackageById(int pricePackageId) throws Exception {
         String sql = "SELECT * FROM PricePackage WHERE id = ?";
