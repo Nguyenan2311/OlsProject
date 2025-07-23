@@ -247,9 +247,7 @@
                 <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
                 <a href="#">Blog</a>
                 <a href="#">About</a>
-                <c:if test="${not empty sessionScope.user}">
-            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
-        </c:if>
+                
             </div>
             <div class="right-section">
                 <div class="search-bar">
@@ -376,7 +374,7 @@
                                 <button id = "action2"type="button" class="btn btn-success btn-lg px-5 py-3 " 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#registrationModal">
-                                    Register Now
+                                    Go to payment
                                 </button>
                             </div>
                         </c:if>
@@ -408,7 +406,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="register-course" method="POST" id="registrationForm" novalidate="">
+                        <%-- SỬA: Trỏ action đến servlet xử lý thanh toán --%>
+<form action="create-payment" method="POST" id="registrationForm" novalidate="">
                             <input type="hidden" name="courseId" value="${courseDetail.courseInfo.id}">
                             <h6>Select Price Package</h6>
                             <c:choose>
