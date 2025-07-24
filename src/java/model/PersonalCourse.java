@@ -10,6 +10,7 @@ public class PersonalCourse {
     private int progress;
     private int pricePackageId;
     private int saleNoteId;
+    private int status;
 
     // Getters and setters
     public int getId() { return id; }
@@ -28,10 +29,12 @@ public class PersonalCourse {
     public void setPricePackageId(int pricePackageId) { this.pricePackageId = pricePackageId; }
     public int getSaleNoteId() { return saleNoteId; }
     public void setSaleNoteId(int saleNoteId) { this.saleNoteId = saleNoteId; }
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 
     @Override
     public String toString() {
-        return "PersonalCourse{" + "id=" + id + ", customerId=" + customerId + ", courseId=" + courseId + ", enrollDate=" + enrollDate + ", expireDate=" + expireDate + ", progress=" + progress + ", pricePackageId=" + pricePackageId + ", saleNoteId=" + saleNoteId + '}';
+        return "PersonalCourse{" + "id=" + id + ", customerId=" + customerId + ", courseId=" + courseId + ", enrollDate=" + enrollDate + ", expireDate=" + expireDate + ", progress=" + progress + ", pricePackageId=" + pricePackageId + ", saleNoteId=" + saleNoteId + ", status=" + status + '}';
     }
     
 }

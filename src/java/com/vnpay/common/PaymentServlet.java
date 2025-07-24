@@ -10,7 +10,6 @@ import model.PasswordHasher;
 import model.PricePackage;
 import model.User;
 import service.PasswordResetService;
-import com.vnpay.common.Config; // Lớp Config chứa thông tin VNPAY
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +23,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
+import model.CourseDetail;
+import service.CourseService;
 
 @WebServlet("/create-payment")
 public class PaymentServlet extends HttpServlet {
@@ -54,37 +56,69 @@ public class PaymentServlet extends HttpServlet {
                 String email = req.getParameter("email");
                 String mobile = req.getParameter("phone");
                 String gender = req.getParameter("gender");
+                Map<String, String> errors = new HashMap<>();
 
-                // (Bạn có thể thêm logic validation ở đây và forward lại nếu có lỗi)
-                if (userDAO.isEmailExists(email)) {
-                    session.setAttribute("registrationStatus", "error");
-                    session.setAttribute("registrationMessage", "This email is already registered. Please <a href='login' class='alert-link'>login</a> to continue.");
-                    resp.sendRedirect(redirectURL);
+                // --- Bắt đầu Validation ---
+                if (!isEmailValid(email)) {
+                    errors.put("email", "Please enter a valid form email address ex: abc@gmail.com");
+                } else if (userDAO.isEmailExists(email)) {
+                    errors.put("email", "This email is already registered. Please <a href='login.jsp' class='alert-link'>login</a>.");
+                }
+
+                if (fullName == null || fullName.trim().isEmpty()) {
+                    errors.put("fullName", "Full Name is required.");
+                }
+                // --- Kết thúc Validation ---
+                if (mobile == null || mobile.trim().isEmpty()) {
+                    errors.put("mobile", "Phone Number is required.");
+                }
+                if (!errors.isEmpty()) {
+                    // Nếu có lỗi, forward lại trang và hiển thị lỗi
+                    req.setAttribute("validationErrors", errors);
+                    req.setAttribute("submittedFullName", fullName);
+                    req.setAttribute("submittedEmail", email);
+                    req.setAttribute("submittedMobile", mobile);
+                    req.setAttribute("submittedGender", gender);
+                    req.setAttribute("openModal", true); // Tín hiệu để tự động mở modal
+
+                    // Load lại dữ liệu trang để hiển thị đúng
+                    CourseService courseService = new CourseService();
+                    CourseDetail courseDetail = courseService.getCourseDetails(courseId);
+                    req.setAttribute("courseDetail", courseDetail);
+
+                    // Load lại categories và taglines cho sidebar
+                    List<String> categories = courseService.getCategories();
+                    List<model.Tagline> taglines = courseService.getAllTaglines();
+                    req.setAttribute("categories", categories);
+                    req.setAttribute("taglines", taglines);
+
+                    req.getRequestDispatcher("/courseDetail.jsp").forward(req, resp);
                     return;
                 }
 
-                // Tạo tài khoản mới
+                // Nếu không có lỗi, tạo user mới
                 String[] nameParts = NameUtils.splitFullName(fullName);
-                String temporaryPassword = UUID.randomUUID().toString();
-                String hashedPassword = PasswordHasher.hash(temporaryPassword);
+                String firstName = nameParts[0];
+                String lastName = nameParts[1];
 
-                User newUser = userDAO.createNewUser(nameParts[1], nameParts[0], email, mobile, gender, hashedPassword);
+                String randomPassword = UUID.randomUUID().toString().substring(0, 8);
+                String hashedPassword = PasswordHasher.hash(randomPassword);
+                PasswordResetService resetService = new PasswordResetService();
+
+                User newUser = userDAO.createNewUser(firstName, lastName, email, mobile, gender, hashedPassword);
                 if (newUser == null) {
-                    throw new Exception("Could not create new user account.");
+                    throw new Exception("Failed to create a new user account.");
                 }
-                user = newUser; // Gán user mới tạo để sử dụng cho các bước tiếp theo
 
-                // Gửi email chứa link thiết lập mật khẩu
-                PasswordResetService emailService = new PasswordResetService();
-                emailService.sendInitialSetPasswordEmail(newUser, req);
+                boolean emailSent = resetService.sendInitialSetPasswordEmail(newUser, req);
+                user = newUser; // Gán user mới tạo để xử lý ở các bước tiếp theo
             }
-            
+
             // --- Bước 2: Ghi danh khóa học với trạng thái "Pending" ---
-            // Phương thức enrollCourse sẽ tự động xử lý việc ghi đè nếu cần
             registrationDAO.enrollCourse(user.getId(), courseId, pricePackageId);
             System.out.println("DEBUG: User " + user.getId() + " has been enrolled in course " + courseId + " with 'Pending' status.");
 
-            // --- Bước 3: Lấy thông tin giá và tạo đơn hàng trong CSDL ---
+            // --- Bước 3: Lấy thông tin giá và tạo/cập nhật đơn hàng trong CSDL ---
             PricePackage selectedPackage = courseDAO.getPricePackageById(pricePackageId);
             if (selectedPackage == null) {
                 throw new Exception("Price package not found.");
@@ -92,14 +126,24 @@ public class PaymentServlet extends HttpServlet {
             double totalAmount = selectedPackage.getSalePrice();
             String orderInfo = courseId + "_Payment for " + selectedPackage.getTitle();
 
-            Order newOrder = orderDAO.createOrder(user.getId(), totalAmount, orderInfo);
-            if (newOrder == null) {
-                throw new Exception("Could not create the order.");
+            Order existingOrder = orderDAO.findUnpaidOrderByUserAndCourse(user.getId(), courseId);
+            Order orderToUse;
+            if (existingOrder != null) {
+                // Cập nhật order cũ
+                orderDAO.updateOrder(existingOrder.getId(), totalAmount, orderInfo);
+                orderDAO.updateOrderDetail(existingOrder.getId(), courseId, pricePackageId, selectedPackage.getPrice(), totalAmount);
+                orderToUse = existingOrder;
+            } else {
+                // Tạo order mới
+                orderToUse = orderDAO.createOrder(user.getId(), totalAmount, orderInfo);
+                if (orderToUse == null) {
+                    throw new Exception("Could not create the order.");
+                }
+                orderDAO.createOrderDetail(orderToUse.getId(), courseId, pricePackageId, selectedPackage.getPrice(), totalAmount);
             }
-            orderDAO.createOrderDetail(newOrder.getId(), courseId, pricePackageId, selectedPackage.getPrice(), totalAmount);
 
             // --- Bước 4: Chuẩn bị tham số và tạo URL thanh toán VNPAY ---
-            String vnp_TxnRef = String.valueOf(newOrder.getId());
+            String vnp_TxnRef = String.valueOf(orderToUse.getId());
             long amount = (long) (totalAmount * 100000); // Nhân giá tiền với 100,000
 
             Map<String, String> vnp_Params = new HashMap<>();
@@ -139,6 +183,7 @@ public class PaymentServlet extends HttpServlet {
 
     /**
      * Builds the VNPAY payment URL with a secure hash.
+     *
      * @param vnp_Params Map of parameters to be sent to VNPAY.
      * @return The final payment URL.
      * @throws IOException
@@ -171,5 +216,14 @@ public class PaymentServlet extends HttpServlet {
         String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         return Config.vnp_PayUrl + "?" + queryUrl;
+    }
+
+    // Hàm validate email
+    private boolean isEmailValid(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        String emailRegex = "^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\\.[a-zA-Z]{2,}$";
+        return Pattern.compile(emailRegex).matcher(email).matches();
     }
 }

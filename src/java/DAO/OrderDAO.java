@@ -304,4 +304,54 @@ public class OrderDAO extends DBContext {
             }
         }
     }
+
+    // Tìm Order chưa thanh toán cho user và course (Pending hoặc Processing)
+    public Order findUnpaidOrderByUserAndCourse(int userId, int courseId) throws Exception {
+        String sql = "SELECT o.* FROM Orders o JOIN OrderDetail od ON o.id = od.order_id WHERE o.user_id = ? AND od.course_id = ? AND (o.payment_status = 'Pending' OR o.payment_status = 'Processing')";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, courseId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Order order = new Order();
+                    order.setId(rs.getInt("id"));
+                    order.setUserId(rs.getInt("user_id"));
+                    order.setTotalAmount(rs.getDouble("total_amount"));
+                    order.setOrderInfo(rs.getString("order_info"));
+                    order.setPaymentStatus(rs.getString("payment_status"));
+                    order.setCreatedDate(rs.getTimestamp("created_date"));
+                    // ... set other fields nếu cần
+                    return order;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Cập nhật lại order cũ
+    public void updateOrder(int orderId, double totalAmount, String orderInfo) throws Exception {
+        String sql = "UPDATE Orders SET total_amount = ?, order_info = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDouble(1, totalAmount);
+            stmt.setString(2, orderInfo);
+            stmt.setInt(3, orderId);
+            stmt.executeUpdate();
+        }
+    }
+
+    // Cập nhật lại order detail cũ
+    public void updateOrderDetail(int orderId, int courseId, int pricePackageId, double price, double salePrice) throws Exception {
+        String sql = "UPDATE OrderDetail SET price_package_id = ?, price = ?, sale_price = ? WHERE order_id = ? AND course_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, pricePackageId);
+            stmt.setDouble(2, price);
+            stmt.setDouble(3, salePrice);
+            stmt.setInt(4, orderId);
+            stmt.setInt(5, courseId);
+            stmt.executeUpdate();
+        }
+    }
 }

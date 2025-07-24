@@ -94,6 +94,26 @@ public class RegistrationDAO extends DBContext {
      * @throws Exception if the database operation fails.
      */
     public void activateCourseEnrollment(int customerId, int courseId, int pricePackageId, int orderDetailId) throws Exception {
+        // Kiểm tra đã có bản ghi status=0 chưa
+        String checkSql = "SELECT COUNT(*) FROM PersonalCourse WHERE customer_id = ? AND course_id = ? AND status = 0";
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, customerId);
+            checkStmt.setInt(2, courseId);
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // Nếu đã có bản ghi status=0, chỉ update status=2
+                    String updateSql = "UPDATE PersonalCourse SET status = 2 WHERE customer_id = ? AND course_id = ? AND status = 0";
+                    try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                        updateStmt.setInt(1, customerId);
+                        updateStmt.setInt(2, courseId);
+                        updateStmt.executeUpdate();
+                    }
+                    return;
+                }
+            }
+        }
+        // Nếu chưa có, insert mới như cũ
         
         // Lấy thông tin gói giá để tính ngày hết hạn
         CourseDAO courseDAO = new CourseDAO(); // Giả sử CourseDAO có thể lấy price package
@@ -117,6 +137,9 @@ public class RegistrationDAO extends DBContext {
             }
         }
         
+        // Xóa bản ghi cũ nếu có
+        deleteExistingEnrollment(customerId, courseId);
+
         // Câu lệnh INSERT vào PersonalCourse
         String sql = "INSERT INTO PersonalCourse (customer_id, course_id, enroll_date, expire_date, progress, order_detail_id, status, price_package_id) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -131,7 +154,7 @@ public class RegistrationDAO extends DBContext {
             stmt.setInt(5, 0); // Progress ban đầu
          
             stmt.setInt(6, orderDetailId); // Liên kết với chi tiết đơn hàng
-            stmt.setInt(7, 1); // Trạng thái đã kích hoạt
+            stmt.setInt(7, 2); // Trạng thái đã kích hoạt (pending)
             stmt.setInt(8, pricePackageId); // Trạng thái đã kích hoạt
 
             int affectedRows = stmt.executeUpdate();

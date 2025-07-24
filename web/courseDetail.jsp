@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%-- Đặt biến kiểm tra đã đăng ký active hoặc pending ngay sau các taglib --%>
+<c:set var="alreadyEnrolled" value="${not empty sessionScope.user and sessionScope.user.id != null and courseDetail.courseInfo.id != null and fn:contains(userRegisteredActiveOrPendingCourseIds, courseDetail.courseInfo.id)}" />
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -371,11 +374,23 @@
 
                             <%-- SỬA: Thay thế thẻ <a> bằng thẻ <button> để mở modal --%>
                             <div class="text-center mt-5">
-                                <button id = "action2"type="button" class="btn btn-success btn-lg px-5 py-3 " 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#registrationModal">
-                                    Go to payment
-                                </button>
+                                <c:if test="${alreadyEnrolled}">
+                                    <div class="alert alert-info mb-3">Bạn đã đăng ký khóa học này, hãy tới <a href="myCourses" class="alert-link">My Course</a> để học!</div>
+                                </c:if>
+                                <c:choose>
+                                    <c:when test="${alreadyEnrolled}">
+                                        <button type="button" class="btn btn-secondary btn-lg px-5 py-3" disabled>
+                                            Đã đăng ký khóa học này
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button id = "action2" type="button" class="btn btn-success btn-lg px-5 py-3 " 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#registrationModal">
+                                            Go to payment
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </c:if>
                     </div>
@@ -501,7 +516,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" form="registrationForm">Submit Registration</button>
+                        <c:choose>
+                            <c:when test="${alreadyEnrolled}">
+                                <button type="submit" class="btn btn-primary" form="registrationForm" disabled>Submit Registration</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="submit" class="btn btn-primary" form="registrationForm">Submit Registration</button>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
             </div>
