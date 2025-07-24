@@ -1,10 +1,12 @@
-package control.user;
+package control.course;
 
 import DAO.PersonalCourseDAO;
 import DAO.CourseDAO;
+import DAO.CourseDTODAO;
 import model.PersonalCourse;
 import model.User;
 import model.Course;
+import model.CourseDTO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @WebServlet("/myCourses")
 public class MyCoursesServlet extends HttpServlet {
@@ -36,24 +40,26 @@ public class MyCoursesServlet extends HttpServlet {
             System.out.println("PersonalCourse: " + pc);
         }
         
+        CourseDTODAO courseDTODao = new CourseDTODAO();
+        List<CourseDTO> allCourseDTOs = courseDTODao.getCourse();
+        Map<Integer, CourseDTO> courseDTOMap = new HashMap<>();
+        for (CourseDTO dto : allCourseDTOs) {
+            courseDTOMap.put(dto.getId(), dto);
+        }
+
         for (PersonalCourse pc : personalCourses) {
             try {
-                Course c = courseDao.getCourseById(pc.getCourseId());
-                System.out.println("Course for courseId " + pc.getCourseId() + ": " + c);
-                if (c != null) {
+                CourseDTO dto = courseDTOMap.get(pc.getCourseId());
+                if (dto != null) {
                     MyCourseItem item = new MyCourseItem();
-                    item.setId(c.getId());
-                    item.setTitle(c.getSubtitle());
-                    item.setTagline(courseDao.getCourseDetail(c.getId()) != null ? courseDao.getCourseDetail(c.getId()).getTagline() : "");
-                    // You may want to fetch thumbnail from a related DAO or field if available
-                    item.setThumbnailUrl(""); // Set thumbnail if available
+                    item.setId(dto.getId());
+                    item.setTitle(dto.getTitle());
+                    item.setTagline(dto.getTagline());
+                    item.setThumbnailUrl(dto.getThumbnailUrl() != null ? dto.getThumbnailUrl() : "");
                     item.setValidFrom(pc.getEnrollDate());
                     item.setValidTo(pc.getExpireDate());
                     item.setActive(pc.getExpireDate() != null && pc.getExpireDate().after(new java.util.Date()));
                     myCourses.add(item);
-                    System.out.println("Added MyCourseItem: " + item.getTitle());
-                } else {
-                    System.out.println("Course is null for courseId: " + pc.getCourseId());
                 }
             } catch (Exception e) {
                 System.out.println("Exception in processing PersonalCourse: " + e.getMessage());

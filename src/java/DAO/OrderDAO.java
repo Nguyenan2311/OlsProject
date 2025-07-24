@@ -281,4 +281,27 @@ public class OrderDAO extends DBContext {
             return stmt.executeUpdate() > 0;
         }
     }
+
+    // Xóa đơn hàng và các chi tiết liên quan
+    public boolean deleteOrder(int orderId) throws Exception {
+        String sqlDetail = "DELETE FROM OrderDetail WHERE order_id = ?";
+        String sqlOrder = "DELETE FROM Orders WHERE id = ?";
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmtDetail = conn.prepareStatement(sqlDetail);
+                 PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder)) {
+                stmtDetail.setInt(1, orderId);
+                stmtDetail.executeUpdate();
+                stmtOrder.setInt(1, orderId);
+                int affected = stmtOrder.executeUpdate();
+                conn.commit();
+                return affected > 0;
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
 }

@@ -90,6 +90,24 @@ public class SaleDashboardServlet extends HttpServlet {
             response.sendRedirect("sale-dashboard");
             return;
         }
+        if ("deleteOrder".equals(action)) {
+            String orderIdStr = request.getParameter("orderId");
+            HttpSession session = request.getSession();
+            try {
+                int orderId = Integer.parseInt(orderIdStr);
+                DAO.OrderDAO orderDAO = new DAO.OrderDAO();
+                boolean deleted = orderDAO.deleteOrder(orderId);
+                if (deleted) {
+                    session.setAttribute("successMessage", "Order deleted successfully.");
+                } else {
+                    session.setAttribute("errorMessage", "Failed to delete order.");
+                }
+            } catch (Exception e) {
+                session.setAttribute("errorMessage", "Error: " + e.getMessage());
+            }
+            response.sendRedirect("sale-dashboard");
+            return;
+        }
         // ... (các xử lý POST khác nếu có)
     }
 }

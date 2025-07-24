@@ -261,6 +261,11 @@
                                     <i class="bi bi-arrow-repeat"></i> Update
                                 </button>
                             </form>
+                            <form action="sale-dashboard" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                <input type="hidden" name="action" value="deleteOrder" />
+                                <input type="hidden" name="orderId" value="${order.orderId}" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger ms-1"><i class="bi bi-trash"></i> Delete</button>
+                            </form>
                         </td>
                     </tr>
                 </c:forEach>
