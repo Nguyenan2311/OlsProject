@@ -184,6 +184,67 @@ public class OrderDAO extends DBContext {
     }
 
     /**
+     * Lấy danh sách đơn hàng có filter cho Sale Dashboard
+     */
+    public List<SaleDashboardOrderDTO> getFilteredOrdersForSaleDashboard(String status, String email, String courseName, String orderId, String fromDate, String toDate) throws Exception {
+        List<SaleDashboardOrderDTO> orderList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT o.id AS orderId, o.created_date AS orderDate, u.email AS customerEmail, " +
+                "c.subtitle AS courseName, pp.title AS packageName, o.total_amount AS totalAmount, " +
+                "o.payment_status AS paymentStatus " +
+                "FROM Orders o " +
+                "JOIN [User] u ON o.user_id = u.id " +
+                "JOIN OrderDetail od ON o.id = od.order_id " +
+                "JOIN Course c ON od.course_id = c.id " +
+                "JOIN PricePackage pp ON od.price_package_id = pp.id WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND o.payment_status = ?");
+            params.add(status);
+        }
+        if (email != null && !email.isEmpty()) {
+            sql.append(" AND u.email LIKE ?");
+            params.add("%" + email + "%");
+        }
+        if (courseName != null && !courseName.isEmpty()) {
+            sql.append(" AND c.subtitle LIKE ?");
+            params.add("%" + courseName + "%");
+        }
+        if (orderId != null && !orderId.isEmpty()) {
+            sql.append(" AND o.id = ?");
+            params.add(orderId);
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql.append(" AND o.created_date >= ?");
+            params.add(java.sql.Date.valueOf(fromDate));
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql.append(" AND o.created_date <= ?");
+            params.add(java.sql.Date.valueOf(toDate));
+        }
+        sql.append(" ORDER BY o.created_date DESC");
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    SaleDashboardOrderDTO dto = new SaleDashboardOrderDTO();
+                    dto.setOrderId(rs.getInt("orderId"));
+                    dto.setOrderDate(rs.getTimestamp("orderDate"));
+                    dto.setCustomerEmail(rs.getString("customerEmail"));
+                    dto.setCourseName(rs.getString("courseName"));
+                    dto.setPackageName(rs.getString("packageName"));
+                    dto.setTotalAmount(rs.getDouble("totalAmount"));
+                    dto.setPaymentStatus(rs.getString("paymentStatus"));
+                    orderList.add(dto);
+                }
+            }
+        }
+        return orderList;
+    }
+
+    /**
      * [MỚI] Lấy thông tin chi tiết của một đơn hàng để kích hoạt khóa học.
      * @param orderId ID của đơn hàng.
      * @return Đối tượng OrderDetail nếu tìm thấy.
@@ -206,5 +267,41 @@ public class OrderDAO extends DBContext {
             }
         }
         return null;
+    }
+
+    /**
+     * Cập nhật trạng thái đơn hàng theo orderId
+     */
+    public boolean updateOrderStatusById(int orderId, String newStatus) throws Exception {
+        String sql = "UPDATE Orders SET payment_status = ?, updated_date = GETDATE() WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newStatus);
+            stmt.setInt(2, orderId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    // Xóa đơn hàng và các chi tiết liên quan
+    public boolean deleteOrder(int orderId) throws Exception {
+        String sqlDetail = "DELETE FROM OrderDetail WHERE order_id = ?";
+        String sqlOrder = "DELETE FROM Orders WHERE id = ?";
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmtDetail = conn.prepareStatement(sqlDetail);
+                 PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder)) {
+                stmtDetail.setInt(1, orderId);
+                stmtDetail.executeUpdate();
+                stmtOrder.setInt(1, orderId);
+                int affected = stmtOrder.executeUpdate();
+                conn.commit();
+                return affected > 0;
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
     }
 }

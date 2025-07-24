@@ -40,65 +40,7 @@
         }
 
         /* === Navbar Styling === */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .logo {
-            height: 45px;
-            display: flex;
-            align-items: center;
-        }
-        .logo img {
-            height: 200%;
-            width: auto;
-            max-width: 200px;
-            object-fit: contain;
-        }
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            margin-left: 20px;
-            margin-right: auto;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            font-size: 25px;
-        }
-        .right-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* SỬA: Chỉ áp dụng cho ô search trong navbar */
-        .navbar .search-bar .form-control {
-            width: 300px; /* Giảm chiều rộng cho hợp lý */
-            height: 50px;
-            padding: 8px 12px;
-            font-size: 16px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-        }
-
-        .signup-btn {
-            padding: 8px 20px;
-            background-color: #4a00e0;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            width: 150px;
-            height: 50px;
-            border-radius: 10px;
-        }
-
+        
         /* === Sidebar Styling giống courseDetail === */
         .sidebar-section {
             margin-bottom: 1.5rem;
@@ -297,37 +239,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="img/logo.png" alt="alt"/>
-        </div>
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home" class="nav-link active">Home</a>
-            <a href="${pageContext.request.contextPath}/courses" class="nav-link active">Courses</a>
-            <a href="#">Blog</a>
-            <a href="#">About</a>
-            <c:if test="${not empty sessionScope.user}">
-            <a href="${pageContext.request.contextPath}/my-registrations" class="nav-link">My Registrations</a>
-        </c:if>
-        </div>
-        <div class="right-section">
-            <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search courses..." 
-                       name="search" value="${searchKeyword}" form="filterForm" 
-                       onkeypress="if (event.key === 'Enter')
-                                   filterForm.submit();">
-            </div>
-            <button class="signup-btn">
-            <c:if test="${not empty sessionScope.user}">
-            <a href="logout" class="signup-btn">Log out</a>
-        </c:if>
-             <c:if test="${empty sessionScope.user}">
-            <a href="login" class="signup-btn">Log in</a>
-        </c:if>
-            </button>
-        </div>
-    </nav>
-    
+    <%@include file = "header.jsp" %>
     <div class="container mt-5">
         <h1 class="mb-4 text-center" style="font-weight: 700;">My Course Registrations</h1>
         <div class="row">

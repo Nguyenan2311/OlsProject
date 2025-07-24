@@ -24,84 +24,8 @@
                 color: #333;
             }
 
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px 50px;
-                background-color: white;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            }
-
-
-
-            .logo {
-                height: 45px; /* Chiều cao cố định */
-                display: flex;
-                align-items: center;
-            }
-            .logo img {
-                height: 200%; /* Chiếm toàn bộ chiều cao của container */
-                width: auto; /* Giữ tỷ lệ gốc của ảnh */
-                max-width: 200px; /* Giới hạn chiều rộng tối đa */
-                object-fit: contain; /* Đảm bảo ảnh không bị biến dạng */
-            }
-
-            .nav-links {
-                display: flex;
-                gap: 30px;
-                margin-left: 20px;
-                margin-right: auto; /* Đẩy phần còn lại sang phải */
-            }
-
-            .nav-links a {
-                text-decoration: none;
-                color: #333;
-                font-weight: 500;
-                font-size: 25px;
-            }
-
-            .right-section {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .right-section search-bar  {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .search-bar input {
-                padding: 8px 15px;
-                border: 1px solid #ddd;
-                border-radius: 20px;
-                outline: none;
-                width: 200px;
-            }
-            input[type="text"] {
-                width: 800px;       /* chiều rộng */
-                height: 50px;       /* chiều cao */
-                padding: 8px 12px;  /* khoảng cách bên trong */
-                font-size: 16px;    /* cỡ chữ */
-                border-radius: 20px; /* bo góc */
-                border: 1px solid #ccc;
-            }
-
-            .signup-btn {
-                padding: 8px 20px;
-                background-color: #4a00e0;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-weight: bold;
-                cursor: pointer;
-                width: 150px;       /* chiều rộng */
-                height: 50px;
-                border-radius:10px; /* bo góc */
-            }
-
+            
+            
             .container {
                 max-width: 800px;
                 margin: 50px auto;
@@ -184,23 +108,7 @@
         </style>
     </head>
     <body>
-        <nav class="navbar">
-            <div class="logo">
-                <img src="img/logo.png" alt="alt"/>
-            </div>
-            <div class="nav-links">
-                <a href="home">Home</a>
-                <a href="#">Courses</a>
-                <a href="#">Blog</a>
-                <a href="#">About</a>
-            </div>
-            <div class="right-section">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search courses...">
-                </div>
-                <button href="login" class="signup-btn" >Sign Up</button>
-            </div>
-        </nav>
+         <%@include file = "header.jsp" %>
         <div class="container">
             <h2>RESET PASSWORD</h2>
             <p>Provide us with your registered email address</p>

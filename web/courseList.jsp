@@ -16,88 +16,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
         <style>
-            /* (Giữ nguyên style hiện tại) */
-            body {
-                font-family: 'Roboto', sans-serif;
-                background-color: #ffffff;
-            }
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px 50px;
-                background-color: white;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            }
-            .logo {
-                height: 45px;
-                display: flex;
-                align-items: center;
-            }
-            .logo img {
-                height: 200%;
-                width: auto;
-                max-width: 200px;
-                object-fit: contain;
-            }
-            .nav-links {
-                display: flex;
-                gap: 30px;
-                margin-left: 20px;
-                margin-right: auto;
-            }
-            .nav-links a {
-                text-decoration: none;
-                color: #333;
-                font-weight: 500;
-                font-size: 25px;
-            }
-            .right-section {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-            }
-            .right-section search-bar {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-            }
-            .search-bar input {
-                padding: 8px 15px;
-                border: 1px solid #ddd;
-                border-radius: 20px;
-                outline: none;
-                width: 200px;
-            }
-            input[type="text"] {
-                width: 800px;
-                height: 50px;
-                padding: 8px 12px;
-                font-size: 16px;
-                border-radius: 20px;
-                border: 1px solid #ccc;
-            }
-            .signup-btn {
-                padding: 8px 20px;
-                background-color: #4a00e0;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-weight: bold;
-                cursor: pointer;
-                width: 150px;
-                height: 50px;
-                border-radius: 10px;
-            }
-            .page-title {
-                font-size: 3rem;
-                font-weight: 700;
-                text-align: center;
-                margin: 2rem 0;
-            }
-            .sidebar-section {
-                margin-bottom: 2rem;
-            }
+  
             /* Phần Featured */
             .sidebar-section h5 {
                 font-size: 1.1rem;
@@ -264,71 +183,9 @@
             }
         </style>
     </head>
+      <%@include file = "header.jsp" %>
     <body>
-       <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-            <img src="img/logo.png" alt="EDEMY Logo" style="height: 45px; max-width: 200px; object-fit: contain;">
-        </a>
-
-        <div class="collapse navbar-collapse">
-            <div class="nav-links navbar-nav me-auto mb-2 mb-lg-0">
-                <a href="${pageContext.request.contextPath}/home" class="nav-link">Home</a>
-                <a href="${pageContext.request.contextPath}/courses" class="nav-link">Courses</a>
-                <a href="#" class="nav-link">Blog</a>
-                <a href="#" class="nav-link">About</a>
-
-                <%-- KHI USER ĐÃ ĐĂNG NHẬP, HIỂN THỊ MENU DROPDOWN --%>
-                <c:if test="${not empty sessionScope.user}">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            My Learning
-                        </a>
-                        <ul class="dropdown-menu">
-                            <%-- 1. Cầu nối vào khóa học --%>
-                            <li>
-                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-course">
-                                    <i class="bi bi-collection-play-fill me-2"></i>My Courses
-                                </a>
-                            </li>
-                          
-                             <%-- 3. Lịch sử đăng ký chi tiết --%>
-                            <li>
-                                <a class="dropdown-item" href="${pageContext.request.contextPath}/my-registrations">
-                                    <i class="bi bi-receipt-cutoff me-2"></i>Registration History
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                             <%-- 4. Các liên kết khác như Profile... --%>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-person-circle me-2"></i>My Profile
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </c:if>
-            </div>
-
-            <div class="right-section d-flex align-items-center">
-                <div class="search-bar me-2">
-                    <input type="text" class="form-control" placeholder="Search courses..." 
-                           name="search" value="${searchKeyword}" form="filterForm" 
-                           onkeypress="if (event.key === 'Enter') filterForm.submit();">
-                </div>
-                
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <a href="logout" class="btn btn-danger">Log Out</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="login" class="btn btn-primary">Log In</a>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </div>
-    </div>
-</nav>
+      
         <div class="container mt-4">
             <h1 class="page-title">Course List</h1>
             <div class="row">
@@ -402,7 +259,7 @@
                             </c:choose>
                         </c:forEach>
                     </div>
-                                       <!-- START: MODIFIED FEATURED LINKS -->
+                    <!-- START: MODIFIED FEATURED LINKS -->
                     <div class="sidebar-section">
                         <h5>Featured</h5>
                         <%-- Phần sắp xếp theo ngày giữ nguyên --%>
@@ -459,7 +316,7 @@
                                     <%-- Liên kết được in đậm vì nó là bộ lọc đang hoạt động --%>
                                     <a href="${tagUrl}" class="featured-link fw-bold">${tagline.name}</a>
                                 </c:when>
-                                
+
                                 <%-- Trường hợp 2: Thẻ này CHƯA được chọn. Tạo liên kết để CHỌN nó. --%>
                                 <c:otherwise>
                                     <c:url var="tagUrl" value="courses">

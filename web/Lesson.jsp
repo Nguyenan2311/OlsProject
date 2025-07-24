@@ -42,7 +42,6 @@
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
                 margin: 0;
                 padding: 0;
-                display: flex;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 min-height: 100vh;
                 color: var(--dark-color);
@@ -567,125 +566,128 @@
     </head>
 
     <body>
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2><i class="fas fa-graduation-cap"></i> ${course.subtitle}</h2>
+        <%@include file = "header.jsp" %>
+        <div class="main-flex" style="display: flex;">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-graduation-cap"></i> ${course.subtitle}</h2>
 
-            </div>
+                </div>
 
-            <c:forEach items="${listModule}" var="module">
-                <div class="module">
-                    <div class="module-title" onclick="toggleModule(this)">
-                        <div style="display: flex; align-items: center;">
-                            <span class="module-number">${module.order}</span>
-                            <span>${module.name}</span>
+                <c:forEach items="${listModule}" var="module">
+                    <div class="module">
+                        <div class="module-title" onclick="toggleModule(this)">
+                            <div style="display: flex; align-items: center;">
+                                <span class="module-number">${module.order}</span>
+                                <span>${module.name}</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
 
-                    <div class="chapter">
-                        <c:forEach items="${listChapter}" var="chapter">
-                            <c:if test="${chapter.moduleId == module.id}">
-                                <div class="chapter-title">
-                                    <i class="fas fa-folder-open"></i>
-                                    <span>Chapter ${chapter.order}: ${chapter.subtitle}</span>
-                                </div>
+                        <div class="chapter">
+                            <c:forEach items="${listChapter}" var="chapter">
+                                <c:if test="${chapter.moduleId == module.id}">
+                                    <div class="chapter-title">
+                                        <i class="fas fa-folder-open"></i>
+                                        <span>Chapter ${chapter.order}: ${chapter.subtitle}</span>
+                                    </div>
 
-                                <!-- Lessons trực tiếp trong Chapter -->
-                                <div class="lessons">
-                                    <c:forEach items="${listLesson}" var="lesson">
-                                        <c:if test="${lesson.chapterId == chapter.id && lesson.subChapterId==0}">
-                                            <a href="?courseId=${param.courseId}&lessonId=${lesson.id}"
-                                               class="lesson-item ${param.lessonId == lesson.id ? 'active' : ''}">
-                                                <i class="fas fa-play-circle"></i>
-                                                <span class="lesson-number">${lesson.order}</span>
-                                                <span>${lesson.title}</span>
-                                            </a>
+                                    <!-- Lessons trực tiếp trong Chapter -->
+                                    <div class="lessons">
+                                        <c:forEach items="${listLesson}" var="lesson">
+                                            <c:if test="${lesson.chapterId == chapter.id && lesson.subChapterId==0}">
+                                                <a href="?courseId=${param.courseId}&lessonId=${lesson.id}"
+                                                   class="lesson-item ${param.lessonId == lesson.id ? 'active' : ''}">
+                                                    <i class="fas fa-play-circle"></i>
+                                                    <span class="lesson-number">${lesson.order}</span>
+                                                    <span>${lesson.title}</span>
+                                                </a>
+                                            </c:if>
+                                        </c:forEach>
+                                    </div>
+
+                                    <!-- SubChapters -->
+                                    <c:forEach items="${listSubChapter}" var="sub">
+                                        <c:if test="${sub.chapterId == chapter.id}">
+                                            <div class="subchapter-title">
+                                                <i class="fas fa-folder"></i>
+                                                <span>SubChapter ${sub.order}: ${sub.title}</span>
+                                            </div>
+
+                                            <!-- Lessons trong SubChapter -->
+                                            <div class="lessons sub-lessons">
+                                                <c:forEach items="${listLesson}" var="lesson">
+                                                    <c:if test="${lesson.subChapterId == sub.id}">
+                                                        <a href="?courseId=${param.courseId}&lessonId=${lesson.id}"
+                                                           class="lesson-item ${param.lessonId == lesson.id ? 'active' : ''}">
+                                                            <i class="fas fa-play-circle"></i>
+                                                            <span class="lesson-number">${lesson.order}</span>
+                                                            <span>${lesson.title}</span>
+                                                        </a>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </div>
                                         </c:if>
                                     </c:forEach>
-                                </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
 
-                                <!-- SubChapters -->
-                                <c:forEach items="${listSubChapter}" var="sub">
-                                    <c:if test="${sub.chapterId == chapter.id}">
-                                        <div class="subchapter-title">
-                                            <i class="fas fa-folder"></i>
-                                            <span>SubChapter ${sub.order}: ${sub.title}</span>
-                                        </div>
+            <div class="content-area">
+                <div class="content-header">
+                    <h1>Lesson Content</h1>
+                </div>
 
-                                        <!-- Lessons trong SubChapter -->
-                                        <div class="lessons sub-lessons">
-                                            <c:forEach items="${listLesson}" var="lesson">
-                                                <c:if test="${lesson.subChapterId == sub.id}">
-                                                    <a href="?courseId=${param.courseId}&lessonId=${lesson.id}"
-                                                       class="lesson-item ${param.lessonId == lesson.id ? 'active' : ''}">
-                                                        <i class="fas fa-play-circle"></i>
-                                                        <span class="lesson-number">${lesson.order}</span>
-                                                        <span>${lesson.title}</span>
-                                                    </a>
-                                                </c:if>
-                                            </c:forEach>
+                <c:if test="${not empty param.lessonId}">
+                    <div class="content-tabs">
+                        <a href="?courseId=${param.courseId}&lessonId=${param.lessonId}&contentType=text" 
+                           class="tab ${param.contentType != 'video' ? 'active' : ''}">
+                            <i class="fas fa-file-alt"></i> Text Content
+                        </a>
+                        <a href="?courseId=${param.courseId}&lessonId=${param.lessonId}&contentType=video" 
+                           class="tab ${param.contentType == 'video' ? 'active' : ''}">
+                            <i class="fas fa-video"></i> Video Content
+                        </a>
+                    </div>
+
+                    <div class="content-display">
+                        <c:forEach items="${listLessonContent}" var="lc">
+                            <c:if test="${lc.lessonId == param.lessonId}">
+                                <c:choose>
+                                    <c:when test="${param.contentType == 'video' && not empty lc.videoId}">
+                                        <div class="video-container">
+                                            <iframe src="https://www.youtube.com/embed/${lc.videoId}" 
+                                                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen></iframe>
                                         </div>
-                                    </c:if>
-                                </c:forEach>
+                                        <c:if test="${not empty lc.videoDescription}">
+                                            <div class="video-description">
+                                                <p><i class="fas fa-info-circle"></i> ${lc.videoDescription}</p>
+                                            </div>
+                                        </c:if>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="text-content">
+                                            ${lc.textContent}
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:if>
                         </c:forEach>
                     </div>
-                </div>
-            </c:forEach>
-        </div>
+                </c:if>
 
-        <div class="content-area">
-            <div class="content-header">
-                <h1>Lesson Content</h1>
+                <c:if test="${empty param.lessonId}">
+                    <div class="empty-state">
+                        <i class="fas fa-book-reader"></i>
+                        <h3>Ready to Learn?</h3>
+                        <p>Select a lesson from the sidebar to begin your learning journey</p>
+                    </div>
+                </c:if>
             </div>
-
-            <c:if test="${not empty param.lessonId}">
-                <div class="content-tabs">
-                    <a href="?courseId=${param.courseId}&lessonId=${param.lessonId}&contentType=text" 
-                       class="tab ${param.contentType != 'video' ? 'active' : ''}">
-                        <i class="fas fa-file-alt"></i> Text Content
-                    </a>
-                    <a href="?courseId=${param.courseId}&lessonId=${param.lessonId}&contentType=video" 
-                       class="tab ${param.contentType == 'video' ? 'active' : ''}">
-                        <i class="fas fa-video"></i> Video Content
-                    </a>
-                </div>
-
-                <div class="content-display">
-                    <c:forEach items="${listLessonContent}" var="lc">
-                        <c:if test="${lc.lessonId == param.lessonId}">
-                            <c:choose>
-                                <c:when test="${param.contentType == 'video' && not empty lc.videoId}">
-                                    <div class="video-container">
-                                        <iframe src="https://www.youtube.com/embed/${lc.videoId}" 
-                                                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                                allowfullscreen></iframe>
-                                    </div>
-                                    <c:if test="${not empty lc.videoDescription}">
-                                        <div class="video-description">
-                                            <p><i class="fas fa-info-circle"></i> ${lc.videoDescription}</p>
-                                        </div>
-                                    </c:if>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="text-content">
-                                        ${lc.textContent}
-                                    </div>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:if>
-                    </c:forEach>
-                </div>
-            </c:if>
-
-            <c:if test="${empty param.lessonId}">
-                <div class="empty-state">
-                    <i class="fas fa-book-reader"></i>
-                    <h3>Ready to Learn?</h3>
-                    <p>Select a lesson from the sidebar to begin your learning journey</p>
-                </div>
-            </c:if>
         </div>
 
         <script>

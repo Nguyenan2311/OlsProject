@@ -121,6 +121,7 @@
 </head>
 <body>
 <div class="container">
+      <%@include file = "header.jsp" %>
     <h2>My Courses</h2>
     <c:if test="${empty myCourses}">
         <div style="font-size:1.15rem;color:#c0392b;text-align:center;margin:32px 0;">You have no access-allowed courses.</div>
