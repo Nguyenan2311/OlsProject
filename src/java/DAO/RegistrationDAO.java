@@ -126,8 +126,8 @@ public class RegistrationDAO extends DBContext {
 
             stmt.setInt(1, customerId);
             stmt.setInt(2, courseId);
-            stmt.setObject(3, enrollDate); // JDBC tự động chuyển đổi LocalDate
-            stmt.setObject(4, expireDate);
+            stmt.setDate(3, java.sql.Date.valueOf(enrollDate)); // Sửa lỗi: chuyển LocalDate sang java.sql.Date
+            stmt.setDate(4, java.sql.Date.valueOf(expireDate)); // Sửa lỗi: chuyển LocalDate sang java.sql.Date
             stmt.setInt(5, 0); // Progress ban đầu
          
             stmt.setInt(6, orderDetailId); // Liên kết với chi tiết đơn hàng

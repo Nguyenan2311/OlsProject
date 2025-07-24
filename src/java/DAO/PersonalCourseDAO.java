@@ -31,6 +31,47 @@ public class PersonalCourseDAO extends DBContext {
         }
         return list;
     }
+
+    // Kiểm tra đã ghi danh chưa
+    public boolean exists(int userId, int courseId) throws Exception {
+        String sql = "SELECT COUNT(*) FROM PersonalCourse WHERE customer_id = ? AND course_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, courseId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Ghi danh mới
+    public void enrollCourse(int userId, int courseId, int pricePackageId) throws Exception {
+        String sql = "INSERT INTO PersonalCourse (customer_id, course_id, enroll_date, expire_date, price_package_id, progress, status) VALUES (?, ?, GETDATE(), DATEADD(MONTH, 1, GETDATE()), ?, 0, 1)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, courseId);
+            ps.setInt(3, pricePackageId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Cập nhật trạng thái ghi danh
+    public void updateStatus(int userId, int courseId, String status) throws Exception {
+        String sql = "UPDATE PersonalCourse SET status = ? WHERE customer_id = ? AND course_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, userId);
+            ps.setInt(3, courseId);
+            ps.executeUpdate();
+        }
+    }
+
     public static void main(String[] args) {
         PersonalCourseDAO dao = new PersonalCourseDAO();
         List<PersonalCourse> list = dao.getPersonalCoursesByUser(3);
