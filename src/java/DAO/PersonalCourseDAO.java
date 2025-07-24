@@ -24,6 +24,7 @@ public class PersonalCourseDAO extends DBContext {
                 pc.setProgress(rs.getInt("progress"));
                 pc.setPricePackageId(rs.getInt("price_package_id"));
                 pc.setSaleNoteId(rs.getInt("sale_note_id"));
+                pc.setStatus(rs.getInt("status"));
                 list.add(pc);
             }
         } catch (Exception e) {
@@ -61,11 +62,11 @@ public class PersonalCourseDAO extends DBContext {
     }
 
     // Cập nhật trạng thái ghi danh
-    public void updateStatus(int userId, int courseId, String status) throws Exception {
+    public void updateStatus(int userId, int courseId, int status) throws Exception {
         String sql = "UPDATE PersonalCourse SET status = ? WHERE customer_id = ? AND course_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status);
+            ps.setInt(1, status);
             ps.setInt(2, userId);
             ps.setInt(3, courseId);
             ps.executeUpdate();

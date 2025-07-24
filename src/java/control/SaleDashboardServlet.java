@@ -68,15 +68,20 @@ public class SaleDashboardServlet extends HttpServlet {
                 boolean updated = orderDAO.updateOrderStatusById(orderId, newStatus);
                 if (updated) {
                     // Nếu trạng thái mới là Active hoặc Completed thì ghi danh hoặc cập nhật PersonalCourse
-                    if ("Active".equalsIgnoreCase(newStatus) || "Completed".equalsIgnoreCase(newStatus)) {
+                    if ("Active".equalsIgnoreCase(newStatus) || "Pending".equalsIgnoreCase(newStatus) || "Processing".equalsIgnoreCase(newStatus)) {
                         model.Order order = orderDAO.getOrderById(orderId);
                         model.OrderDetail detail = orderDAO.getOrderDetailByOrderId(orderId);
                         if (order != null && detail != null) {
                             DAO.PersonalCourseDAO pcDao = new DAO.PersonalCourseDAO();
+                            int statusInt = 0;
+                            if ("Active".equalsIgnoreCase(newStatus)) statusInt = 1;
+                            else if ("Pending".equalsIgnoreCase(newStatus)) statusInt = 2;
+                            else if ("Processing".equalsIgnoreCase(newStatus)) statusInt = 0;
                             if (!pcDao.exists(order.getUserId(), detail.getCourseId())) {
                                 pcDao.enrollCourse(order.getUserId(), detail.getCourseId(), detail.getPricePackageId());
+                                pcDao.updateStatus(order.getUserId(), detail.getCourseId(), statusInt);
                             } else {
-                                pcDao.updateStatus(order.getUserId(), detail.getCourseId(), "1"); // 1 = Active
+                                pcDao.updateStatus(order.getUserId(), detail.getCourseId(), statusInt);
                             }
                         }
                     }

@@ -232,6 +232,32 @@
             } else {
                 transactionStatus = "invalid";
             }
+
+            // --- Cập nhật trạng thái PersonalCourse dựa vào kết quả thanh toán ---
+            try {
+                String orderIdStr = request.getParameter("vnp_TxnRef");
+                if (orderIdStr != null && orderIdStr.matches("\\d+")) {
+                    int orderId = Integer.parseInt(orderIdStr);
+                    DAO.OrderDAO orderDAO = new DAO.OrderDAO();
+                    DAO.RegistrationDAO regDAO = new DAO.RegistrationDAO();
+                    model.Order order = orderDAO.getOrderById(orderId);
+                    model.OrderDetail detail = orderDAO.getOrderDetailByOrderId(orderId);
+                    if (order != null && detail != null) {
+                        int userId = order.getUserId();
+                        int courseId = detail.getCourseId();
+                        int pricePackageId = detail.getPricePackageId();
+                        if (transactionStatus.equals("success")) {
+                            // Thành công: cập nhật PersonalCourse status = 2 (pending)
+                            regDAO.activateCourseEnrollment(userId, courseId, pricePackageId, detail.getId());
+                        } else if (transactionStatus.equals("failure")) {
+                            // Thất bại: cập nhật PersonalCourse status = 0 (submitted)
+                            regDAO.enrollCourse(userId, courseId, pricePackageId); // enrollCourse mặc định status=0
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         %>
 
         <div class="payment-container">

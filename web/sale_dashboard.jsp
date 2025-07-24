@@ -107,11 +107,11 @@
             <div class="col">
                 <div class="dashboard-card text-bg-success text-center">
                     <div class="icon"><i class="bi bi-check-circle-fill"></i></div>
-                    <div class="card-title">Completed</div>
+                    <div class="card-title">Processing</div>
                     <div class="card-text">
                         <c:set var="completedCount" value="0"/>
                         <c:forEach var="order" items="${orderList}">
-                            <c:if test="${order.paymentStatus == 'Completed'}">
+                            <c:if test="${order.paymentStatus == 'Processing'}">
                                 <c:set var="completedCount" value="${completedCount + 1}"/>
                             </c:if>
                         </c:forEach>
@@ -122,11 +122,11 @@
             <div class="col">
                 <div class="dashboard-card text-bg-danger text-center">
                     <div class="icon"><i class="bi bi-x-circle-fill"></i></div>
-                    <div class="card-title">Failed</div>
+                    <div class="card-title">Processing</div>
                     <div class="card-text">
                         <c:set var="failedCount" value="0"/>
                         <c:forEach var="order" items="${orderList}">
-                            <c:if test="${order.paymentStatus == 'Failed'}">
+                            <c:if test="${order.paymentStatus == 'Processing'}">
                                 <c:set var="failedCount" value="${failedCount + 1}"/>
                             </c:if>
                         </c:forEach>
@@ -184,8 +184,7 @@
                     <option value="">All Status</option>
                     <option value="Pending" ${status == 'Pending' ? 'selected' : ''}>Pending</option>
                     <option value="Active" ${status == 'Active' ? 'selected' : ''}>Active</option>
-                    <option value="Completed" ${status == 'Completed' ? 'selected' : ''}>Completed</option>
-                    <option value="Failed" ${status == 'Failed' ? 'selected' : ''}>Failed</option>
+                    <option value="Processing" ${status == 'Processing' ? 'selected' : ''}>Processing</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -229,9 +228,9 @@
                         <td>${order.packageName}</td>
                         <td><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="$"/></td>
                         <td>
-                            <span class="badge d-inline-flex align-items-center ${order.paymentStatus == 'Completed' ? 'bg-success' : (order.paymentStatus == 'Pending' ? 'bg-warning text-dark' : (order.paymentStatus == 'Active' ? 'bg-info text-dark' : 'bg-danger'))}">
+                            <span class="badge d-inline-flex align-items-center ${order.paymentStatus == 'Processing' ? 'bg-success' : (order.paymentStatus == 'Pending' ? 'bg-warning text-dark' : (order.paymentStatus == 'Active' ? 'bg-info text-dark' : 'bg-danger'))}">
                                 <c:choose>
-                                    <c:when test="${order.paymentStatus == 'Completed'}">
+                                    <c:when test="${order.paymentStatus == 'Processing'}">
                                         <i class="bi bi-check-circle-fill me-1"></i>
                                     </c:when>
                                     <c:when test="${order.paymentStatus == 'Pending'}">
@@ -254,8 +253,7 @@
                                 <select name="newStatus" class="form-select form-select-sm status-select" style="width: 120px;">
                                     <option value="Pending" ${order.paymentStatus == 'Pending' ? 'selected' : ''}>Pending</option>
                                     <option value="Active" ${order.paymentStatus == 'Active' ? 'selected' : ''}>Active</option>
-                                    <option value="Completed" ${order.paymentStatus == 'Completed' ? 'selected' : ''}>Completed</option>
-                                    <option value="Failed" ${order.paymentStatus == 'Failed' ? 'selected' : ''}>Failed</option>
+                                    <option value="Processing" ${order.paymentStatus == 'Processing' ? 'selected' : ''}>Processing</option>
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-outline-primary update-btn" ${order.paymentStatus == order.paymentStatus ? 'disabled' : ''}>
                                     <i class="bi bi-arrow-repeat"></i> Update
@@ -302,7 +300,7 @@
             var chart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'Active', 'Completed', 'Failed'],
+                    labels: ['Pending', 'Active', 'Processing'],
                     datasets: [{
                         data: [
                             Number(document.querySelector('.dashboard-card.text-bg-warning .card-text').textContent),
@@ -313,8 +311,8 @@
                         backgroundColor: [
                             '#facc15', // Pending
                             '#38bdf8', // Active
-                            '#22c55e', // Completed
-                            '#ef4444'  // Failed
+                            '#22c55e', // Processing
+                            '#ef4444'  // Processing
                         ],
                         borderWidth: 1
                     }]

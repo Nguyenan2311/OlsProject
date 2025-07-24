@@ -48,8 +48,13 @@ public class CourseRegistrationDAO extends DBContext {
             rs = stmt.executeQuery();
             while (rs.next()) {
                 String status;
-                if (rs.getInt("status") == 0) {
-                    status = "Submitted"; // or "Submitted"
+                int dbStatus = rs.getInt("status");
+                if (dbStatus == 0) {
+                    status = "Submitted";
+                } else if (dbStatus == 1) {
+                    status = "Active";
+                } else if (dbStatus == 2) {
+                    status = "Pending";
                 } else {
                     status = rs.getInt("progress") == 100 ? "Completed" :
                              rs.getDate("expire_date").before(new Date()) ? "Expired" : "Active";
