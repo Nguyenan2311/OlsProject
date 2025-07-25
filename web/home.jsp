@@ -585,7 +585,7 @@
                         <div class="scroll-content">
                             <c:forEach items="${listCourse}" var="o">
                                 <div class="card" style="box-shadow:0 8px 32px rgba(255,215,0,0.09);">
-                                    <a href="lesson?courseId=${o.id}">
+                                    <a href="course-detail?id=${o.id}">
                                         <img src="${o.thumbnailUrl}" alt="${o.title}">
                                         <p>${o.title}</p>
                                     </a>

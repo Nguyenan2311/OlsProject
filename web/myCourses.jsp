@@ -142,7 +142,7 @@
                         </div>
                         <div class="card-status">
                             <c:choose>
-                                <c:when test="${c.active}"><span class="status-active">Active</span></c:when>
+                                <c:when test="${c.active==1}"><span class="status-active">Active</span></c:when>
                                 <c:otherwise><span class="status-expired">Expired</span></c:otherwise>
                             </c:choose>
                         </div>

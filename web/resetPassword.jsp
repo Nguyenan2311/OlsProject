@@ -11,139 +11,129 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>EDEMY - Reset Password</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
         <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Arial', sans-serif;
-            }
-
             body {
-                background-color: ffffff;
-                color: #333;
+                font-family: 'Poppins', sans-serif;
+                background-color: #f4f6f9;
             }
-
-            
-            
-            .container {
-                max-width: 800px;
-                margin: 50px auto;
-                padding: 40px;
-                background-color: ffffff;
-
-
-
+            .reset-container {
+                max-width: 420px;
+                margin: 120px auto 40px;
+                padding: 2rem 2.5rem;
+                background-color: #fff;
+                border-radius: 16px;
+                box-shadow: 0 0 24px rgba(79,70,229,0.08);
             }
-            .container p {
-                color: #666;
-                margin-bottom: 2px;
-                text-align: center;
+            .reset-container h2 {
+                font-weight: 700;
+                color: #4f46e5;
+                margin-bottom: 10px;
             }
-
-            h2 {
-
-                text-align: center;
-                margin-bottom: 30px;
-                color: #333;
-                font-size: 60px
-            }
-
-            .form-group {
-                margin-bottom: 20px;
-            }
-
-            label {
-                display: block;
-                margin-bottom: 8px;
+            .form-label {
                 font-weight: 500;
             }
-
-            input[type="email"] {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 16px;
+            .input-group-text {
+                background: #f4f6f9;
+                border: none;
+                color: #4f46e5;
             }
-
-
+            .btn-reset {
+                background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+                border: none;
+                color: white;
+                font-weight: 600;
+                padding: 0.7rem;
+                border-radius: 8px;
+                width: 100%;
+                transition: all 0.3s;
+                font-size: 1.1rem;
+            }
+            .btn-reset:hover {
+                background: linear-gradient(90deg, #60a5fa 0%, #6366f1 100%);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.12);
+            }
+            .alert, .error-msg {
+                font-size: 1rem;
+                text-align: center;
+                color: red;
+                margin-bottom: 10px;
+            }
+            .form-control {
+                border-radius: 8px;
+                border: 1px solid #ced4da;
+                padding: 0.75rem 1rem;
+            }
+            .form-control:focus {
+                border-color: #4f46e5;
+                box-shadow: 0 0 0 0.18rem rgba(79,70,229,0.12);
+            }
             .login-link {
                 display: block;
-                margin: 15px 0;
-                color: #4a00e0;
+                margin: 15px 0 0 0;
+                color: #4f46e5;
                 text-decoration: none;
-                font-size: 14px;
-                align-content: center;
+                font-size: 0.95rem;
                 text-align: center;
             }
-
             .login-link:hover {
-                color: #3a00c0;
+                color: #4338ca;
                 text-decoration: underline;
             }
-
-            .submit-btn {
-                width: 100%;
-                padding: 12px;
-                background-color: #4a00e0;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background-color 0.3s;
-            }
-
-            .submit-btn:hover {
-                background-color: #3a00c0;
-            }
-
-            hr {
-                border: none;
-                border-top: 1px solid #eee;
-                margin: 30px 0;
+            @media (max-width: 600px) {
+                .reset-container { margin: 40px 8px; padding: 1.2rem 0.5rem; }
             }
         </style>
     </head>
     <body>
          <%@include file = "header.jsp" %>
         <div class="container">
-            <h2>RESET PASSWORD</h2>
-            <p>Provide us with your registered email address</p>
-
-            <%-- Hiển thị thông báo lỗi --%>
-            <% if (request.getAttribute("error") != null) { %>
-            <div style="color: red; text-align: center; margin-bottom: 20px;">
-                <%= request.getAttribute("error") %>
-            </div>
-            <% } %>
-
-            <form id="resetForm" action="RequestResetPasswordServlet" method="GET" novalidate>
-                <div class="form-group">
-                    <input type="text" id="email" name="email" placeholder="✉ Email">
+            <div class="reset-container">
+                <div class="text-center mb-4">
+                    <i class="bi bi-lock-fill" style="font-size: 2.5rem; color: #4f46e5;"></i>
+                    <h2 class="fw-bold mb-1">Reset Password</h2>
+                    <p class="text-muted mb-0">Provide us with your registered email address</p>
                 </div>
-                <button type="submit" class="submit-btn">Send Reset Link</button>
-                <a href="login" class="login-link">Want to back? Login</a>
-            </form>
-
-            <script>
-                document.getElementById("resetForm").addEventListener("submit", function (e) {
-                    var email = document.getElementById("email").value.trim();
-                    var emailPattern = /^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/;
-
-                    if (email === "") {
-                        alert("Please input Email");
-                        e.preventDefault();
-                    } else if (!emailPattern.test(email)) {
-                        alert("Invalid email. Please enter correct format.");
-                        e.preventDefault();
-                    }
-                });
-            </script>
-
-
+                <% if (request.getAttribute("error") != null) { %>
+                    <div id="alertMsg" class="error-msg">
+                        <%= request.getAttribute("error") %>
+                    </div>
+                <% } %>
+                <form id="resetForm" action="RequestResetPasswordServlet" method="GET" novalidate autocomplete="off">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-reset btn-lg">Send Reset Link</button>
+                    </div>
+                    <a href="login" class="login-link">Want to back? Login</a>
+                </form>
+            </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Tự động ẩn alert sau 3s
+            setTimeout(function() {
+                var alertMsg = document.getElementById('alertMsg');
+                if(alertMsg) alertMsg.style.display = 'none';
+            }, 3000);
+            document.getElementById("resetForm").addEventListener("submit", function (e) {
+                var email = document.getElementById("email").value.trim();
+                var emailPattern = /^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/;
+                if (email === "") {
+                    alert("Please input Email");
+                    e.preventDefault();
+                } else if (!emailPattern.test(email)) {
+                    alert("Invalid email. Please enter correct format.");
+                    e.preventDefault();
+                }
+            });
+        </script>
     </body>
 </html>
